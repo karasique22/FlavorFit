@@ -1,0 +1,58 @@
+model Order {
+  id      String @id @default(cuid())
+  orderId String @unique @map("order_id")
+
+  totalAmount Float       @map("total_amount")
+  status      OrderStatus @default(PENDING)
+  orderItems  OrderItem[]
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @map("user_id")
+
+  courier   Courier? @relation(fields: [courierId], references: [id])
+  courierId String?  @map("courier_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id String @id @default(cuid())
+
+  quantity Int @default(1)
+
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  ingredientId String     @map("ingredient_id")
+
+  order   Order?  @relation(fields: [orderId], references: [id])
+  orderId String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("order_items")
+}
+
+model Courier {
+  id String @id @default(cuid())
+
+  name        String
+  phoneNumber String @map("phone_number")
+  vehicleType String @map("vehicle_type")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  orders    Order[]
+
+  @@map("couriers")
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELED
+}

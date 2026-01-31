@@ -1,0 +1,163 @@
+model Recipe {
+  id String @id @default(cuid())
+
+  title       String
+  slug        String  @unique
+  description String?
+  heroImage   String? @map("hero_image")
+
+  difficulty Difficulty @default(EASY)
+  mealType   MealType?  @map("meal_type")
+  dietType   DietType?  @map("diet_type")
+
+  prepTimeMinutes Int? @map("prep_time_minutes")
+  cookTimeMinutes Int? @map("cook_time_minutes")
+  servings        Int?
+
+  calories Int?
+  protein  Int?
+  fat      Int?
+  carbs    Int?
+
+  author   User?   @relation(fields: [authorId], references: [id])
+  authorId String? @map("author_id")
+
+  ingredients RecipeIngredient[]
+  steps       RecipeStep[]
+  tags        RecipeTag[]
+
+  comments Comment[]
+  likes    Like[]
+
+  isPublished Boolean   @default(false) @map("is_published")
+  publishedAt DateTime? @map("published_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("recipes")
+}
+
+model Ingredient {
+  id String @id @default(cuid())
+
+  name        String  @unique
+  slug        String  @unique
+  description String?
+  price       Decimal
+  iconUrl     String? @map("icon_url")
+  defaultUnit Unit?   @map("default_unit")
+
+  // caloriesPer100g Int?   @map("calories_per_100g")
+  // proteinPer100g  Decimal? @map("protein_per_100g")
+  // fatPer100g      Decimal? @map("fat_per_100g")
+  // carbsPer100g    Decimal? @map("carbs_per_100g")
+
+  recipeIngredients RecipeIngredient[]
+  orderItems        OrderItem[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("ingredients")
+}
+
+model RecipeIngredient {
+  id String @id @default(cuid())
+
+  amount Decimal
+  unit   Unit?
+
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  ingredientId String     @map("ingredient_id")
+
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId String @map("recipe_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([recipeId, ingredientId])
+  @@map("recipe_ingredients")
+}
+
+model RecipeStep {
+  id String @id @default(cuid())
+
+  order       Int
+  title       String
+  instruction String
+  mediaUrl    String? @map("media_url")
+
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId String @map("recipe_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("recipe_steps")
+}
+
+model Tag {
+  id   String @id @default(cuid())
+  name String @unique
+  slug String @unique
+
+  recipes   RecipeTag[]
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @updatedAt @map("updated_at")
+
+  @@map("tags")
+}
+
+model RecipeTag {
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId String @map("recipe_id")
+
+  tag   Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagId String @map("tag_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@id([recipeId, tagId])
+  @@map("recipe_tags")
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  DINNER
+  SNACK
+  DESSERT
+  DRINK
+}
+
+enum DietType {
+  BALANCED
+  LOW_CARB
+  KETO
+  VEGETARIAN
+  VEGAN
+  DAIRY_FREE
+  GLUTEN_FREE
+  HIGH_PROTEIN
+  PALEO
+}
+
+enum Unit {
+  GRAM // г
+  KILOGRAM // кг
+  MILLILITER // мл
+  LITER // л
+  CUP // стакан
+  TABLESPOON // столовая ложка
+  TEASPOON // чайная ложка
+  PIECE // штука
+}
