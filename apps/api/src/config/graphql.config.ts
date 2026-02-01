@@ -1,16 +1,11 @@
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { ApolloDriverConfig } from '@nestjs/apollo';
 import { ConfigService } from '@nestjs/config';
-import { Request, Response } from 'express';
-import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 
-export interface GraphQLContext {
-  req: Request;
-  res: Response;
-}
-
-export const getGraphQLConfig = async (
+import { GraphQLContext } from '../common/types/graphql.types';
+export const getGraphQLConfig = (
   configService: ConfigService,
-): Promise<ApolloDriverConfig> => {
+): ApolloDriverConfig => {
   const isDev = configService.get('NODE_ENV') !== 'production';
 
   return {

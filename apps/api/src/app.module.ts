@@ -10,7 +10,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { getGraphQLConfig } from './config/graphql.config';
-import { registerGraphQLEnums } from './common/enums';
+import { registerGraphQLEnums } from './common/graphql-enums';
 
 registerGraphQLEnums();
 
