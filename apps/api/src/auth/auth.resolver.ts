@@ -2,7 +2,8 @@ import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { AuthInput } from './auth.input';
 import { AuthResponse } from './auth.models';
-import type { GraphQLContext } from 'src/config/graphql.config';
+import type { GraphQLContext } from '../common/types/graphql.types';
+import { BadRequestException } from '@nestjs/common';
 
 @Resolver()
 export class AuthResolver {
@@ -39,6 +40,26 @@ export class AuthResolver {
     return response;
   }
 
-  // new tokens
-  // logout
+  @Query(() => AuthResponse)
+  async newTokens(@Context() { req, res }: GraphQLContext) {
+    const initRefreshToken = req.cookies[this.authService.REFRESH_TOKEN_NAME];
+
+    if (!initRefreshToken) {
+      this.authService.setRefreshTokenCookie(res, null);
+      throw new BadRequestException('No refresh token provided');
+    }
+
+    const { refreshToken, ...response } =
+      await this.authService.getNewTokens(initRefreshToken);
+
+    this.authService.setRefreshTokenCookie(res, refreshToken);
+
+    return response;
+  }
+
+  @Mutation(() => Boolean)
+  logout(@Context() { res }: GraphQLContext) {
+    this.authService.setRefreshTokenCookie(res, null);
+    return true;
+  }
 }

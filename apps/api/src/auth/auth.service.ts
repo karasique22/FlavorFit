@@ -8,7 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthInput } from './auth.input';
 import { hash, verify } from 'argon2';
-import type { TAuthTokenData } from './auth.types';
+import type { AuthTokenData } from './auth.types';
 import { UsersService } from 'src/users/users.service';
 import { Response } from 'express';
 import { isDev } from 'src/utils/is-dev.util';
@@ -59,6 +59,24 @@ export class AuthService {
     return { user, ...tokens };
   }
 
+  async getNewTokens(refreshToken: string) {
+    const result =
+      await this.jwt.verifyAsync<Pick<AuthTokenData, 'id'>>(refreshToken);
+    if (!result) throw new BadRequestException('Invalid refresh token');
+
+    const user = await this.usersService.findById(result.id);
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    const tokens = this.generateTokens({
+      id: user.id,
+      role: user.role,
+    });
+
+    return { user, ...tokens };
+  }
+
   private async validateUser(input: AuthInput) {
     const email = input.email.toLowerCase();
     const user = await this.usersService.findByEmail(email);
@@ -75,7 +93,7 @@ export class AuthService {
     return user;
   }
 
-  private generateTokens(data: TAuthTokenData) {
+  private generateTokens(data: AuthTokenData) {
     const accessToken = this.jwt.sign(data, {
       expiresIn: '1h',
     });
