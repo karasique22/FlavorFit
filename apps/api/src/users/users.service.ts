@@ -6,9 +6,13 @@ import { UpdateUserProfileArgs } from './users.models';
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
+  private readonly userWithProfileInclude = {
+    profile: { include: { bodyMeasurements: true } },
+  };
+
   async getAllUsers() {
     return this.prisma.user.findMany({
-      include: { profile: { include: { bodyMeasurements: true } } },
+      include: this.userWithProfileInclude,
     });
   }
 
@@ -21,7 +25,7 @@ export class UsersService {
   async findById(id: string) {
     return this.prisma.user.findUnique({
       where: { id },
-      include: { profile: { include: { bodyMeasurements: true } } },
+      include: this.userWithProfileInclude,
     });
   }
 
@@ -41,24 +45,27 @@ export class UsersService {
     const updatedUser = await this.prisma.user.update({
       where: { id: userId },
       data: {
-        profile: profile
-          ? { upsert: { create: profile, update: profile } }
-          : undefined,
+        profile: {
+          upsert: {
+            create: profile ?? {},
+            update: profile ?? {},
+          },
+        },
       },
-      include: { profile: { include: { bodyMeasurements: true } } },
+      include: this.userWithProfileInclude,
     });
 
-    if (measurements && updatedUser.profile) {
+    if (measurements) {
       await this.prisma.bodyMeasurements.create({
         data: {
           ...measurements,
-          profileId: updatedUser.profile.id,
+          profileId: updatedUser.profile!.id,
         },
       });
 
       return this.prisma.user.findUnique({
         where: { id: userId },
-        include: { profile: { include: { bodyMeasurements: true } } },
+        include: this.userWithProfileInclude,
       });
     }
 
