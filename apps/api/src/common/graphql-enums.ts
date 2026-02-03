@@ -1,5 +1,11 @@
 import { registerEnumType } from '@nestjs/graphql';
-import { Role, Gender, NutritionalGoal, ActivityLevel  } from '@repo/database';
+import {
+  ActivityLevel,
+  Gender,
+  NutritionalGoal,
+  Role,
+  Unit,
+} from '@repo/database';
 
 export function registerGraphQLEnums() {
   registerEnumType(Role, {
@@ -20,5 +26,10 @@ export function registerGraphQLEnums() {
   registerEnumType(ActivityLevel, {
     name: 'ActivityLevel',
     description: 'User activity level',
+  });
+
+  registerEnumType(Unit, {
+    name: 'Unit',
+    description: 'Measurement unit for ingredients',
   });
 }
