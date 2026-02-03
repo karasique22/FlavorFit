@@ -5,13 +5,13 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { AuthInput } from './auth.input';
 import { hash, verify } from 'argon2';
-import type { AuthTokenData } from './auth.types';
-import { UsersService } from 'src/users/users.service';
 import { Response } from 'express';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { UsersService } from 'src/users/users.service';
 import { isDev } from 'src/utils/is-dev.util';
+import { AuthInput } from './auth.input';
+import type { AuthTokenData } from './auth.types';
 
 @Injectable()
 export class AuthService {
@@ -64,7 +64,7 @@ export class AuthService {
       await this.jwt.verifyAsync<Pick<AuthTokenData, 'id'>>(refreshToken);
     if (!result) throw new BadRequestException('Invalid refresh token');
 
-    const user = await this.usersService.findById(result.id);
+    const user = await this.usersService.findUserById(result.id);
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
@@ -79,7 +79,7 @@ export class AuthService {
 
   private async validateUser(input: AuthInput) {
     const email = input.email.toLowerCase();
-    const user = await this.usersService.findByEmail(email);
+    const user = await this.usersService.findUserByEmail(email);
 
     if (!user) {
       throw new UnauthorizedException('Invalid email or password');

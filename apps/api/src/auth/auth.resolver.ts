@@ -1,21 +1,18 @@
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { AuthService } from './auth.service';
+import { BadRequestException } from '@nestjs/common';
+import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
+import type { GraphQLContext } from '../common/types/graphql.types';
 import { AuthInput } from './auth.input';
 import { AuthResponse } from './auth.models';
-import type { GraphQLContext } from '../common/types/graphql.types';
-import { BadRequestException } from '@nestjs/common';
+import { AuthService } from './auth.service';
 
 @Resolver()
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
-  @Query(() => String)
-  hello() {
-    return 'Hello from FlavorFit API!';
-  }
-
-  // TODO: капча
-  @Mutation(() => AuthResponse)
+  @Mutation(() => AuthResponse, {
+    name: 'register',
+    description: 'Register a new user account',
+  })
   async register(
     @Args('data') input: AuthInput,
     @Context() { res }: GraphQLContext,
@@ -28,7 +25,10 @@ export class AuthResolver {
     return response;
   }
 
-  @Mutation(() => AuthResponse)
+  @Mutation(() => AuthResponse, {
+    name: 'login',
+    description: 'Authenticate user and return tokens',
+  })
   async login(
     @Args('data') input: AuthInput,
     @Context() { res }: GraphQLContext,
@@ -40,8 +40,11 @@ export class AuthResolver {
     return response;
   }
 
-  @Query(() => AuthResponse)
-  async newTokens(@Context() { req, res }: GraphQLContext) {
+  @Mutation(() => AuthResponse, {
+    name: 'refreshTokens',
+    description: 'Refresh access and refresh tokens using refresh token cookie',
+  })
+  async getNewTokens(@Context() { req, res }: GraphQLContext) {
     const initRefreshToken = req.cookies[this.authService.REFRESH_TOKEN_NAME];
 
     if (!initRefreshToken) {
@@ -57,7 +60,10 @@ export class AuthResolver {
     return response;
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => Boolean, {
+    name: 'logout',
+    description: 'Logout user and clear refresh token cookie',
+  })
   logout(@Context() { res }: GraphQLContext) {
     this.authService.setRefreshTokenCookie(res, null);
     return true;
