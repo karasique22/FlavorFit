@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateUserProfileArgs } from './users.models';
 
@@ -10,26 +10,32 @@ export class UsersService {
     profile: { include: { bodyMeasurements: true } },
   };
 
-  async getAllUsers() {
+  findAll() {
     return this.prisma.user.findMany({
       include: this.userWithProfileInclude,
     });
   }
 
-  async findByEmail(email: string) {
+  findUserByEmail(email: string) {
     return this.prisma.user.findUnique({
       where: { email: email.toLowerCase() },
     });
   }
 
-  async findById(id: string) {
-    return this.prisma.user.findUnique({
+  async findUserById(id: string) {
+    const user = await this.prisma.user.findUnique({
       where: { id },
       include: this.userWithProfileInclude,
     });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
+    return user;
   }
 
-  async createUser(email: string, hashedPassword: string) {
+  createUser(email: string, hashedPassword: string) {
     return this.prisma.user.create({
       data: {
         email: email.toLowerCase(),
@@ -40,35 +46,31 @@ export class UsersService {
   }
 
   async updateProfile(userId: string, input: UpdateUserProfileArgs) {
+    await this.findUserById(userId);
+
     const { profile, measurements } = input;
 
-    const updatedUser = await this.prisma.user.update({
+    return this.prisma.user.update({
       where: { id: userId },
       data: {
         profile: {
           upsert: {
-            create: profile ?? {},
-            update: profile ?? {},
+            create: {
+              ...profile,
+              ...(measurements && {
+                bodyMeasurements: { create: measurements },
+              }),
+            },
+            update: {
+              ...profile,
+              ...(measurements && {
+                bodyMeasurements: { create: measurements },
+              }),
+            },
           },
         },
       },
       include: this.userWithProfileInclude,
     });
-
-    if (measurements) {
-      await this.prisma.bodyMeasurements.create({
-        data: {
-          ...measurements,
-          profileId: updatedUser.profile!.id,
-        },
-      });
-
-      return this.prisma.user.findUnique({
-        where: { id: userId },
-        include: this.userWithProfileInclude,
-      });
-    }
-
-    return updatedUser;
   }
 }
