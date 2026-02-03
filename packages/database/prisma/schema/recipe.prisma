@@ -42,7 +42,6 @@ model Ingredient {
   id String @id @default(cuid())
 
   name        String  @unique
-  slug        String  @unique
   description String?
   price       Decimal
   iconUrl     String? @map("icon_url")
