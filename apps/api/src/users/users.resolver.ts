@@ -2,7 +2,8 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Role } from '@repo/database';
 import { Auth } from 'src/auth/auth.decorator';
 import { CurrentUser } from 'src/common/decorators';
-import { UpdateUserProfileArgs, User } from './users.models';
+import { UpdateUserProfileArgs } from './users.input';
+import { User } from './users.models';
 import { UsersService } from './users.service';
 
 @Resolver()
