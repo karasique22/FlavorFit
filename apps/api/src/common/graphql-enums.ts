@@ -1,7 +1,10 @@
 import { registerEnumType } from '@nestjs/graphql';
 import {
   ActivityLevel,
+  DietType,
+  Difficulty,
   Gender,
+  MealType,
   NutritionalGoal,
   Role,
   Unit,
@@ -31,5 +34,20 @@ export function registerGraphQLEnums() {
   registerEnumType(Unit, {
     name: 'Unit',
     description: 'Measurement unit for ingredients',
+  });
+
+  registerEnumType(Difficulty, {
+    name: 'Difficulty',
+    description: 'Recipe difficulty level',
+  });
+
+  registerEnumType(MealType, {
+    name: 'MealType',
+    description: 'Type of meal (breakfast, lunch, dinner, etc.)',
+  });
+
+  registerEnumType(DietType, {
+    name: 'DietType',
+    description: 'Dietary restriction or preference',
   });
 }
