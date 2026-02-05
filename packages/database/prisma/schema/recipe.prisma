@@ -18,6 +18,7 @@ model Recipe {
   protein  Int?
   fat      Int?
   carbs    Int?
+  fibers   Int?
 
   author   User?   @relation(fields: [authorId], references: [id])
   authorId String? @map("author_id")
@@ -45,12 +46,7 @@ model Ingredient {
   description String?
   price       Decimal
   iconUrl     String? @map("icon_url")
-  defaultUnit Unit?   @map("default_unit")
-
-  // caloriesPer100g Int?   @map("calories_per_100g")
-  // proteinPer100g  Decimal? @map("protein_per_100g")
-  // fatPer100g      Decimal? @map("fat_per_100g")
-  // carbsPer100g    Decimal? @map("carbs_per_100g")
+  defaultUnit Unit    @default(GRAM) @map("default_unit")
 
   recipeIngredients RecipeIngredient[]
   orderItems        OrderItem[]
@@ -65,7 +61,7 @@ model RecipeIngredient {
   id String @id @default(cuid())
 
   amount Decimal
-  unit   Unit?
+  unit   Unit    @default(GRAM)
 
   ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
   ingredientId String     @map("ingredient_id")
@@ -94,6 +90,7 @@ model RecipeStep {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  @@unique([recipeId, order])
   @@map("recipe_steps")
 }
 
@@ -115,9 +112,6 @@ model RecipeTag {
 
   tag   Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
   tagId String @map("tag_id")
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@id([recipeId, tagId])
   @@map("recipe_tags")
