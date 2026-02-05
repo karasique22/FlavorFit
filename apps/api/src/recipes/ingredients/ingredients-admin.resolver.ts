@@ -1,33 +1,35 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Role } from '@repo/database';
 import { Auth } from 'src/auth/auth.decorator';
+import { IngredientsAdminService } from './ingredients-admin.service';
 import {
   CreateIngredientInput,
   UpdateIngredientInput,
 } from './ingredients.input';
 import { Ingredient } from './ingredients.models';
-import { IngredientsService } from './ingredients.service';
 
 @Resolver()
-export class IngredientsResolver {
-  constructor(private readonly ingredientsService: IngredientsService) {}
+export class IngredientsAdminResolver {
+  constructor(
+    private readonly ingredientsAdminService: IngredientsAdminService,
+  ) {}
 
   @Query(() => [Ingredient], {
     name: 'ingredients',
-    description: 'Get all ingredients in the catalog',
+    description: 'Get all ingredients in the catalog (admin)',
   })
   @Auth(Role.ADMIN)
   getAllIngredients() {
-    return this.ingredientsService.findAll();
+    return this.ingredientsAdminService.findAll();
   }
 
   @Query(() => Ingredient, {
     name: 'ingredient',
-    description: 'Get a single ingredient by ID',
+    description: 'Get a single ingredient by ID (admin)',
   })
   @Auth(Role.ADMIN)
   getIngredientById(@Args('id') id: string) {
-    return this.ingredientsService.findOne(id);
+    return this.ingredientsAdminService.findOne(id);
   }
 
   @Mutation(() => Ingredient, {
@@ -36,7 +38,7 @@ export class IngredientsResolver {
   })
   @Auth(Role.ADMIN)
   createIngredient(@Args('input') input: CreateIngredientInput) {
-    return this.ingredientsService.create(input);
+    return this.ingredientsAdminService.create(input);
   }
 
   @Mutation(() => Ingredient, {
@@ -48,7 +50,7 @@ export class IngredientsResolver {
     @Args('id') id: string,
     @Args('input') input: UpdateIngredientInput,
   ) {
-    return this.ingredientsService.update(id, input);
+    return this.ingredientsAdminService.update(id, input);
   }
 
   @Mutation(() => Ingredient, {
@@ -57,6 +59,6 @@ export class IngredientsResolver {
   })
   @Auth(Role.ADMIN)
   deleteIngredientById(@Args('id') id: string) {
-    return this.ingredientsService.remove(id);
+    return this.ingredientsAdminService.remove(id);
   }
 }

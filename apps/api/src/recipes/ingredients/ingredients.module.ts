@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { IngredientsService } from './ingredients.service';
-import { IngredientsResolver } from './ingredients.resolver';
+import { IngredientsAdminResolver } from './ingredients-admin.resolver';
+import { IngredientsAdminService } from './ingredients-admin.service';
 
 @Module({
-  providers: [IngredientsResolver, IngredientsService],
+  providers: [IngredientsAdminResolver, IngredientsAdminService],
 })
 export class IngredientsModule {}

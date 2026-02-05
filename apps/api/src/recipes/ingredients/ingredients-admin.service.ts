@@ -7,23 +7,11 @@ import {
 } from './ingredients.input';
 
 @Injectable()
-export class IngredientsService {
+export class IngredientsAdminService {
   constructor(private readonly prisma: PrismaService) {}
 
   findAll() {
     return this.prisma.ingredient.findMany();
-  }
-
-  async findOne(id: string) {
-    const ingredient = await this.prisma.ingredient.findUnique({
-      where: { id },
-    });
-
-    if (!ingredient) {
-      throw new NotFoundException(`Ingredient with ID ${id} not found`);
-    }
-
-    return ingredient;
   }
 
   async create(data: CreateIngredientInput) {
@@ -33,7 +21,6 @@ export class IngredientsService {
       });
     } catch (error) {
       handlePrismaError(error);
-      throw error;
     }
   }
 
@@ -47,7 +34,6 @@ export class IngredientsService {
       });
     } catch (error) {
       handlePrismaError(error);
-      throw error;
     }
   }
 
@@ -61,5 +47,17 @@ export class IngredientsService {
     } catch (error) {
       handlePrismaError(error);
     }
+  }
+
+  async findOne(id: string) {
+    const ingredient = await this.prisma.ingredient.findUnique({
+      where: { id },
+    });
+
+    if (!ingredient) {
+      throw new NotFoundException(`Ingredient with ID ${id} not found`);
+    }
+
+    return ingredient;
   }
 }

@@ -18,6 +18,6 @@ export class Ingredient {
   @Field({ nullable: true })
   iconUrl?: string;
 
-  @Field(() => Unit, { nullable: true })
-  defaultUnit?: Unit;
+  @Field(() => Unit)
+  defaultUnit!: Unit;
 }
