@@ -1,0 +1,35 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/session-start.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "WriteTool",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/prisma-check.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "EditTool",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/prisma-check.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
