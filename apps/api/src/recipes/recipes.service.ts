@@ -5,12 +5,19 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class RecipesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  findAll() {
-    return this.prisma.recipe.findMany({
+  async findAll() {
+    const recipes = await this.prisma.recipe.findMany({
       include: {
         author: true,
+        comments: true,
       },
     });
+
+    const recipesWithLikesCount = await Promise.all(
+      recipes.map(async (recipe) => this.enrichWithLikesCount(recipe)),
+    );
+
+    return recipesWithLikesCount;
   }
 
   async findBySlug(slug: string) {
@@ -40,6 +47,18 @@ export class RecipesService {
       throw new NotFoundException(`Recipe with slug ${slug} not found`);
     }
 
-    return recipe;
+    return this.enrichWithLikesCount(recipe);
+  }
+
+  private async enrichWithLikesCount<T extends { id: string }>(
+    recipe: T,
+  ): Promise<T & { likesCount: number }> {
+    const likesCount = await this.prisma.like.count({
+      where: { recipeId: recipe.id },
+    });
+    return {
+      ...recipe,
+      likesCount,
+    };
   }
 }
