@@ -22,7 +22,7 @@ export class UsersService {
     });
   }
 
-  async findUserById(id: string) {
+  async findOne(id: string) {
     const user = await this.prisma.user.findUnique({
       where: { id },
       include: this.userWithProfileInclude,
@@ -35,7 +35,7 @@ export class UsersService {
     return user;
   }
 
-  createUser(email: string, hashedPassword: string) {
+  create(email: string, hashedPassword: string) {
     return this.prisma.user.create({
       data: {
         email: email.toLowerCase(),
@@ -45,8 +45,8 @@ export class UsersService {
     });
   }
 
-  async updateProfile(userId: string, input: UpdateUserProfileArgs) {
-    await this.findUserById(userId);
+  async update(userId: string, input: UpdateUserProfileArgs) {
+    await this.findOne(userId);
 
     const { profile, measurements } = input;
 

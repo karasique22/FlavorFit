@@ -35,7 +35,7 @@ export class AuthService {
       throw new BadRequestException('Email already in use');
     }
 
-    const user = await this.usersService.createUser(
+    const user = await this.usersService.create(
       email,
       await hash(input.password),
     );
@@ -64,7 +64,7 @@ export class AuthService {
       await this.jwt.verifyAsync<Pick<AuthTokenData, 'id'>>(refreshToken);
     if (!result) throw new BadRequestException('Invalid refresh token');
 
-    const user = await this.usersService.findUserById(result.id);
+    const user = await this.usersService.findOne(result.id);
     if (!user) {
       throw new UnauthorizedException('User not found');
     }

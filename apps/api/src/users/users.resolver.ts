@@ -16,7 +16,7 @@ export class UsersResolver {
   })
   @Auth()
   getCurrentUser(@CurrentUser('id') id: string) {
-    return this.usersService.findUserById(id);
+    return this.usersService.findOne(id);
   }
 
   @Mutation(() => User, {
@@ -28,7 +28,7 @@ export class UsersResolver {
     @CurrentUser('id') id: string,
     @Args() input: UpdateUserProfileArgs,
   ) {
-    return this.usersService.updateProfile(id, input);
+    return this.usersService.update(id, input);
   }
 
   @Query(() => [User], {
