@@ -6,6 +6,7 @@ import {
   Gender,
   MealType,
   NutritionalGoal,
+  OrderStatus,
   Role,
   Unit,
 } from '@repo/database';
@@ -49,5 +50,10 @@ export function registerGraphQLEnums() {
   registerEnumType(DietType, {
     name: 'DietType',
     description: 'Dietary restriction or preference',
+  });
+
+  registerEnumType(OrderStatus, {
+    name: 'OrderStatus',
+    description: 'Status of an order',
   });
 }
