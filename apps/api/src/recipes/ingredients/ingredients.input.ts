@@ -27,7 +27,7 @@ export class CreateIngredientInput {
   @MaxLength(500)
   description?: string;
 
-  @Field(() => Number)
+  @Field(() => Number, { description: 'Price in cents' })
   @IsNumber()
   @IsPositive()
   price!: number;

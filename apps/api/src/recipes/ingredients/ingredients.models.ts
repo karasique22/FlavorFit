@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Unit } from '@repo/database';
 
 @ObjectType()
@@ -12,7 +12,7 @@ export class Ingredient {
   @Field({ nullable: true })
   description?: string;
 
-  @Field()
+  @Field(() => Int, { description: 'Price in cents' })
   price!: number;
 
   @Field({ nullable: true })
