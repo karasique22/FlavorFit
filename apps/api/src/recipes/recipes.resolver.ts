@@ -1,5 +1,5 @@
 import { Args, Query, Resolver } from '@nestjs/graphql';
-import { Recipe } from './recipes.models';
+import { Recipe } from './models';
 import { RecipesService } from './recipes.service';
 
 @Resolver()

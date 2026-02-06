@@ -2,9 +2,9 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Role } from '@repo/database';
 import { Auth } from 'src/auth/auth.decorator';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { Recipe } from './models';
 import { RecipesAdminService } from './recipes-admin.service';
 import { CreateRecipeInput, UpdateRecipeInput } from './recipes.input';
-import { Recipe } from './recipes.models';
 
 @Resolver()
 export class RecipesAdminResolver {

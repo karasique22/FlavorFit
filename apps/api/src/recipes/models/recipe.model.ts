@@ -1,57 +1,9 @@
-import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
-import { DietType, Difficulty, MealType, Unit } from '@repo/database';
-import { Ingredient } from './ingredients/ingredients.models';
-
-@ObjectType()
-export class RecipeStep {
-  @Field()
-  id!: string;
-
-  @Field(() => Int)
-  order!: number;
-
-  @Field()
-  title!: string;
-
-  @Field()
-  instruction!: string;
-
-  @Field({ nullable: true })
-  mediaUrl?: string;
-}
-
-@ObjectType()
-export class RecipeIngredient {
-  @Field()
-  id!: string;
-
-  @Field(() => Float)
-  amount!: number;
-
-  @Field(() => Unit)
-  unit!: Unit;
-
-  @Field(() => Ingredient)
-  ingredient!: Ingredient;
-}
-
-@ObjectType()
-export class Tag {
-  @Field()
-  id!: string;
-
-  @Field()
-  name!: string;
-
-  @Field()
-  slug!: string;
-}
-
-@ObjectType()
-export class RecipeTag {
-  @Field(() => Tag)
-  tag!: Tag;
-}
+import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { DietType, Difficulty, MealType } from '@repo/database';
+import { User } from 'src/users/users.models';
+import { RecipeIngredient } from './recipe-ingredient.model';
+import { RecipeStep } from './recipe-step.model';
+import { RecipeTag } from './recipe-tag.model';
 
 @ObjectType()
 export class Recipe {
@@ -103,8 +55,8 @@ export class Recipe {
   @Field(() => Int, { nullable: true })
   fibers?: number;
 
-  @Field({ nullable: true })
-  authorId?: string;
+  @Field(() => User, { nullable: true })
+  author?: User;
 
   @Field(() => [RecipeStep], { nullable: true })
   steps?: RecipeStep[];
@@ -117,7 +69,4 @@ export class Recipe {
 
   @Field()
   createdAt!: Date;
-
-  @Field()
-  updatedAt!: Date;
 }
