@@ -7,16 +7,72 @@ import { CreateRecipeInput, UpdateRecipeInput } from './recipes.input';
 export class RecipesAdminService {
   constructor(private readonly prisma: PrismaService) {}
 
+  private readonly recipeWithRelationsInclude = {
+    author: true,
+    steps: {
+      orderBy: {
+        order: 'asc' as const,
+      },
+    },
+    ingredients: {
+      include: {
+        ingredient: true,
+      },
+    },
+  } as const;
+
+  private nameToSlug(name: string): string {
+    return name
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '');
+  }
+
   async create(authorId: string, data: CreateRecipeInput) {
+    const {
+      steps: stepsInput,
+      ingredients: ingredientsInput,
+      tagNames,
+      ...recipeData
+    } = data;
+
     try {
       return await this.prisma.recipe.create({
         data: {
-          ...data,
+          ...recipeData,
           authorId,
+          ...(stepsInput && {
+            steps: {
+              create: stepsInput,
+            },
+          }),
+          ...(ingredientsInput && {
+            ingredients: {
+              create: ingredientsInput.map((item) => ({
+                amount: item.amount,
+                unit: item.unit,
+                ingredientId: item.ingredientId,
+              })),
+            },
+          }),
+          ...(tagNames?.length && {
+            tags: {
+              create: tagNames.map((name) => ({
+                tag: {
+                  connectOrCreate: {
+                    where: { slug: this.nameToSlug(name) },
+                    create: {
+                      name,
+                      slug: this.nameToSlug(name),
+                    },
+                  },
+                },
+              })),
+            },
+          }),
         },
-        include: {
-          author: true,
-        },
+        include: this.recipeWithRelationsInclude,
       });
     } catch (error) {
       handlePrismaError(error);
@@ -26,13 +82,52 @@ export class RecipesAdminService {
   async update(id: string, data: UpdateRecipeInput) {
     await this.findOne(id);
 
+    const {
+      steps: stepsInput,
+      ingredients: ingredientsInput,
+      tagNames,
+      ...recipeData
+    } = data;
+
     try {
       return await this.prisma.recipe.update({
         where: { id },
-        data,
-        include: {
-          author: true,
+        data: {
+          ...recipeData,
+          ...(stepsInput && {
+            steps: {
+              deleteMany: {},
+              create: stepsInput,
+            },
+          }),
+          ...(ingredientsInput && {
+            ingredients: {
+              deleteMany: {},
+              create: ingredientsInput.map((item) => ({
+                amount: item.amount,
+                unit: item.unit,
+                ingredientId: item.ingredientId,
+              })),
+            },
+          }),
+          ...(tagNames?.length && {
+            tags: {
+              deleteMany: {},
+              create: tagNames.map((name) => ({
+                tag: {
+                  connectOrCreate: {
+                    where: { slug: this.nameToSlug(name) },
+                    create: {
+                      name,
+                      slug: this.nameToSlug(name),
+                    },
+                  },
+                },
+              })),
+            },
+          }),
         },
+        include: this.recipeWithRelationsInclude,
       });
     } catch (error) {
       handlePrismaError(error);
