@@ -26,6 +26,7 @@ model Recipe {
   ingredients RecipeIngredient[]
   steps       RecipeStep[]
   tags        RecipeTag[]
+  orderItems  OrderItem[]
 
   comments Comment[]
   likes    Like[]
@@ -44,7 +45,7 @@ model Ingredient {
 
   name        String  @unique
   description String?
-  price       Decimal
+  price       Int
   iconUrl     String? @map("icon_url")
   defaultUnit Unit    @default(GRAM) @map("default_unit")
 
