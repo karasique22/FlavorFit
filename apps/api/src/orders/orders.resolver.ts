@@ -9,8 +9,6 @@ import { Order } from './orders.models';
 import { OrdersService } from './orders.service';
 
 @Resolver()
-@UseGuards(GqlThrottlerGuard)
-@Throttle({ default: { ttl: 60000, limit: 10 } })
 export class OrdersResolver {
   constructor(private readonly ordersService: OrdersService) {}
 
@@ -21,6 +19,8 @@ export class OrdersResolver {
   }
 
   @Mutation(() => Order)
+  @UseGuards(GqlThrottlerGuard)
+  @Throttle({ default: { ttl: 60000, limit: 10 } })
   @Auth()
   createOrder(
     @CurrentUser('id') userId: string,

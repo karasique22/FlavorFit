@@ -10,8 +10,6 @@ import { User } from './users.models';
 import { UsersService } from './users.service';
 
 @Resolver()
-@UseGuards(GqlThrottlerGuard)
-@Throttle({ default: { ttl: 60000, limit: 10 } })
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
@@ -28,6 +26,8 @@ export class UsersResolver {
     name: 'updateProfile',
     description: 'Update user profile and body measurements',
   })
+  @UseGuards(GqlThrottlerGuard)
+  @Throttle({ default: { ttl: 60000, limit: 10 } })
   @Auth()
   updateProfile(
     @CurrentUser('id') id: string,
