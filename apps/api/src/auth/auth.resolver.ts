@@ -1,5 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
+import { Throttle } from '@nestjs/throttler';
 import type { GraphQLContext } from '../common/types/graphql.types';
 import { AuthInput } from './auth.input';
 import { AuthResponse } from './auth.models';
@@ -9,6 +10,7 @@ import { AuthService } from './auth.service';
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
+  @Throttle({ default: { ttl: 60000, limit: 5 } })
   @Mutation(() => AuthResponse, {
     name: 'register',
     description: 'Register a new user account',
@@ -25,6 +27,7 @@ export class AuthResolver {
     return response;
   }
 
+  @Throttle({ default: { ttl: 60000, limit: 5 } })
   @Mutation(() => AuthResponse, {
     name: 'login',
     description: 'Authenticate user and return tokens',

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-interface RequestWithCookies extends Request {
+export interface RequestWithCookies extends Request {
   cookies: Record<string, string | undefined>;
 }
 

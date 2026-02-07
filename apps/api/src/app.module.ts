@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -11,6 +13,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { getGraphQLConfig } from './config/graphql.config';
 import { registerGraphQLEnums } from './common/graphql-enums';
+import { GqlThrottlerGuard } from './common/guards/gql-throttler.guard';
 
 registerGraphQLEnums();
 
@@ -19,6 +22,9 @@ registerGraphQLEnums();
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '../../.env',
+    }),
+    ThrottlerModule.forRoot({
+      throttlers: [{ ttl: 60000, limit: 10 }],
     }),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
@@ -33,6 +39,6 @@ registerGraphQLEnums();
     OrdersModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, { provide: APP_GUARD, useClass: GqlThrottlerGuard }],
 })
 export class AppModule {}
