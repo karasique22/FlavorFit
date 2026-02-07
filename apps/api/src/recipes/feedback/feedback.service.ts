@@ -9,38 +9,46 @@ export class FeedbackService {
   constructor(private readonly prisma: PrismaService) {}
 
   async toggleLike(userId: string, recipeId: string) {
-    const existingLike = await this.prisma.like.findUnique({
-      where: { recipeId_userId: { recipeId, userId } },
-    });
+    try {
+      const existingLike = await this.prisma.like.findUnique({
+        where: { recipeId_userId: { recipeId, userId } },
+      });
 
-    if (existingLike) {
-      await this.prisma.like.delete({
-        where: { id: existingLike.id },
-      });
-      return { liked: false };
-    } else {
-      await this.prisma.like.create({
-        data: {
-          user: { connect: { id: userId } },
-          recipe: { connect: { id: recipeId } },
-        },
-      });
-      return { liked: true };
+      if (existingLike) {
+        await this.prisma.like.delete({
+          where: { id: existingLike.id },
+        });
+        return { liked: false };
+      } else {
+        await this.prisma.like.create({
+          data: {
+            user: { connect: { id: userId } },
+            recipe: { connect: { id: recipeId } },
+          },
+        });
+        return { liked: true };
+      }
+    } catch (error) {
+      handlePrismaError(error);
     }
   }
 
-  createComment(userId: string, input: CommentCreateInput) {
-    return this.prisma.comment.create({
-      data: {
-        content: input.content,
-        author: {
-          connect: { id: userId },
+  async createComment(userId: string, input: CommentCreateInput) {
+    try {
+      return await this.prisma.comment.create({
+        data: {
+          content: input.content,
+          author: {
+            connect: { id: userId },
+          },
+          recipe: {
+            connect: { id: input.recipeId },
+          },
         },
-        recipe: {
-          connect: { id: input.recipeId },
-        },
-      },
-    });
+      });
+    } catch (error) {
+      handlePrismaError(error);
+    }
   }
 
   async updateComment(

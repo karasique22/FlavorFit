@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { handlePrismaError } from 'src/common/utils';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateUserProfileArgs } from './users.input';
 
@@ -35,14 +36,18 @@ export class UsersService {
     return user;
   }
 
-  create(email: string, hashedPassword: string) {
-    return this.prisma.user.create({
-      data: {
-        email: email.toLowerCase(),
-        password: hashedPassword,
-        profile: { create: {} },
-      },
-    });
+  async create(email: string, hashedPassword: string) {
+    try {
+      return await this.prisma.user.create({
+        data: {
+          email: email.toLowerCase(),
+          password: hashedPassword,
+          profile: { create: {} },
+        },
+      });
+    } catch (error) {
+      handlePrismaError(error);
+    }
   }
 
   async update(userId: string, input: UpdateUserProfileArgs) {
