@@ -28,6 +28,7 @@ apps/web/
 ## Shared UI (`@repo/ui`)
 
 Reusable components from the `packages/ui` package:
+
 ```tsx
 import { Button } from "@repo/ui/button";
 import { Card } from "@repo/ui/card";

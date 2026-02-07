@@ -55,6 +55,7 @@ pnpm test:e2e               # E2E tests
 **Modules registered in AppModule:** ConfigModule, GraphQLModule, PrismaModule, AuthModule, UsersModule, RecipesModule, OrdersModule
 
 **Module structure:**
+
 ```
 auth/           # JWT auth: resolver, service, guards (auth.guard, admin.guard), jwt.strategy
 users/          # User CRUD: resolver, service, input, models
@@ -69,6 +70,7 @@ common/         # graphql-enums.ts, decorators (current-user), utils (prisma-err
 **When creating new modules:** Always read an existing module (e.g. `recipes/`) first and follow the same file structure and patterns.
 
 **Key patterns:**
+
 - GraphQL code-first — no .graphql files, schema from TypeScript decorators
 - Public vs Admin split: `recipes.resolver.ts` (queries) + `recipes-admin.resolver.ts` (CRUD with guards)
 - Same pattern for ingredients: `ingredients-admin.resolver.ts`
@@ -84,6 +86,7 @@ common/         # graphql-enums.ts, decorators (current-user), utils (prisma-err
 ## Database (`packages/database`)
 
 **Schema location:** `packages/database/prisma/schema/` (multi-file)
+
 - `schema.prisma` — generator + datasource
 - `user.prisma` — User, Profile, BodyMeasurements
 - `recipe.prisma` — Recipe, Ingredient, RecipeIngredient, RecipeStep, Tag, RecipeTag

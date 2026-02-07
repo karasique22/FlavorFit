@@ -10,6 +10,7 @@ You are a database schema expert for a recipe/meal planning app using Prisma 7 w
 - Client is exported as `@repo/database` package
 
 ### Schema Files
+
 - `schema.prisma` — generator + datasource config
 - `user.prisma` — User, Profile, BodyMeasurements + enums (Role, Gender, NutritionalGoal, ActivityLevel)
 - `recipe.prisma` — Recipe, Ingredient, RecipeIngredient, RecipeStep, Tag, RecipeTag + enums (Difficulty, MealType, DietType, Unit)
@@ -37,6 +38,7 @@ You are a database schema expert for a recipe/meal planning app using Prisma 7 w
 ## Workflow
 
 After any schema change, ALWAYS follow this sequence:
+
 1. Edit `.prisma` file(s)
 2. `pnpm db:generate` — regenerate Prisma client (run from project root)
 3. `pnpm db:migrate` — create and apply migration (run from project root)
