@@ -1,135 +1,99 @@
-# Turborepo starter
+# Red Winter 2026
 
-This Turborepo starter is maintained by the Turborepo core team.
+Turborepo-монорепозиторий: GraphQL API (NestJS) + Next.js frontend для приложения рецептов и планирования питания.
 
-## Using this example
+## Стек технологий
 
-Run the following command:
+- **API:** NestJS 11, Apollo Server 5, GraphQL (code-first)
+- **Frontend:** Next.js 16 (App Router), TailwindCSS v4
+- **База данных:** PostgreSQL, Prisma 7 (PrismaPg adapter)
+- **Монорепо:** Turborepo, pnpm 9
 
-```sh
-npx create-turbo@latest
-```
-
-## What's inside?
-
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
+## Структура
 
 ```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+apps/
+  api/            # NestJS GraphQL API
+  web/            # Next.js frontend
+  docs/           # Документация
+packages/
+  database/       # Prisma-схема и клиент (@repo/database)
+  ui/             # Общие React-компоненты (@repo/ui)
+  eslint-config/  # Конфигурация ESLint
+  typescript-config/
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+## Быстрый старт
 
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+**Требования:** Node.js 18+, pnpm 9, PostgreSQL
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+```bash
+# Установить зависимости
+make install
 
-### Develop
+# Настроить окружение
+cp apps/api/.env.example apps/api/.env
+# Указать DATABASE_URL и JWT_SECRET в .env
 
-To develop all apps and packages, run the following command:
+# Применить миграции
+make db-migrate
 
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
+# Запустить все приложения
+make dev
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+| Приложение | Порт |
+|------------|------|
+| API        | 3000 |
+| Web        | 3002 |
+| Docs       | 3001 |
 
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+GraphQL Sandbox доступен на `http://localhost:3000/graphql` в dev-режиме.
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
+## Команды Makefile
 
-### Remote Caching
+Все команды запускаются из корня репозитория. `make help` покажет полный список.
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+### Разработка
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+| Команда | Описание |
+|---------|----------|
+| `make dev` | Запустить все приложения |
+| `make dev-api` | Запустить только API |
+| `make dev-web` | Запустить только frontend |
+| `make dev-docs` | Запустить только docs |
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+### Сборка и качество кода
 
-```
-cd my-turborepo
+| Команда | Описание |
+|---------|----------|
+| `make build` | Собрать все |
+| `make lint` | Линтер |
+| `make format` | Форматирование (Prettier) |
+| `make check-types` | Проверка типов TypeScript |
 
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
+### Тестирование
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
+| Команда | Описание |
+|---------|----------|
+| `make test` | Unit-тесты (API) |
+| `make test-watch` | Тесты в watch-режиме |
+| `make test-cov` | Тесты с покрытием |
+| `make test-e2e` | E2E-тесты |
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+### База данных
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+| Команда | Описание |
+|---------|----------|
+| `make db-generate` | Сгенерировать Prisma Client |
+| `make db-migrate` | Создать и применить миграцию |
+| `make db-push` | Push схемы без миграции (dev) |
+| `make db-studio` | Открыть Prisma Studio |
+| `make db-reset` | Сбросить БД |
 
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
+### Прочее
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+| Команда | Описание |
+|---------|----------|
+| `make install` | Установить зависимости |
+| `make clean` | Очистить node_modules, dist, кеши |
