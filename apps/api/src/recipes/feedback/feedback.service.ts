@@ -30,6 +30,7 @@ export class FeedbackService {
       }
     } catch (error) {
       handlePrismaError(error);
+      throw error;
     }
   }
 
@@ -48,6 +49,7 @@ export class FeedbackService {
       });
     } catch (error) {
       handlePrismaError(error);
+      throw error;
     }
   }
 
@@ -69,6 +71,7 @@ export class FeedbackService {
       });
     } catch (error) {
       handlePrismaError(error);
+      throw error;
     }
   }
 
@@ -82,6 +85,7 @@ export class FeedbackService {
       });
     } catch (error) {
       handlePrismaError(error);
+      throw error;
     }
   }
 }

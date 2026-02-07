@@ -47,6 +47,7 @@ export class UsersService {
       });
     } catch (error) {
       handlePrismaError(error);
+      throw error;
     }
   }
 
