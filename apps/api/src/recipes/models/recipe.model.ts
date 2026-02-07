@@ -67,6 +67,9 @@ export class Recipe {
   @Field(() => [RecipeTag], { nullable: true })
   tags?: RecipeTag[];
 
+  @Field(() => Int)
+  likesCount!: number;
+
   @Field()
   createdAt!: Date;
 }

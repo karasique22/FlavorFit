@@ -1,4 +1,4 @@
-import { Args, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Query, Resolver } from '@nestjs/graphql';
 import { Recipe } from './models';
 import { RecipesService } from './recipes.service';
 
@@ -10,8 +10,11 @@ export class RecipesResolver {
     name: 'recipes',
     description: 'Get all recipes (public)',
   })
-  getAllRecipes() {
-    return this.recipesService.findAll();
+  getAllRecipes(
+    @Args('skip', { type: () => Int, defaultValue: 0 }) skip: number,
+    @Args('take', { type: () => Int, defaultValue: 20 }) take: number,
+  ) {
+    return this.recipesService.findAll(skip, take);
   }
 
   @Query(() => Recipe, {

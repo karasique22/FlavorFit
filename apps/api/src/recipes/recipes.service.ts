@@ -5,24 +5,27 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class RecipesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll() {
+  async findAll(skip = 0, take = 20) {
     const recipes = await this.prisma.recipe.findMany({
+      where: { isPublished: true },
+      skip,
+      take,
       include: {
         author: true,
         comments: true,
+        _count: { select: { likes: true } },
       },
     });
 
-    const recipesWithLikesCount = await Promise.all(
-      recipes.map(async (recipe) => this.enrichWithLikesCount(recipe)),
-    );
-
-    return recipesWithLikesCount;
+    return recipes.map((recipe) => ({
+      ...recipe,
+      likesCount: recipe._count.likes,
+    }));
   }
 
   async findBySlug(slug: string) {
     const recipe = await this.prisma.recipe.findUnique({
-      where: { slug },
+      where: { slug, isPublished: true },
       include: {
         author: true,
         steps: {
@@ -40,6 +43,7 @@ export class RecipesService {
             tag: true,
           },
         },
+        _count: { select: { likes: true } },
       },
     });
 
@@ -47,18 +51,9 @@ export class RecipesService {
       throw new NotFoundException(`Recipe with slug ${slug} not found`);
     }
 
-    return this.enrichWithLikesCount(recipe);
-  }
-
-  private async enrichWithLikesCount<T extends { id: string }>(
-    recipe: T,
-  ): Promise<T & { likesCount: number }> {
-    const likesCount = await this.prisma.like.count({
-      where: { recipeId: recipe.id },
-    });
     return {
       ...recipe,
-      likesCount,
+      likesCount: recipe._count.likes,
     };
   }
 }
