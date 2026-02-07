@@ -1,7 +1,7 @@
 model Order {
-  id          String @id @default(cuid())
-  orderNumber Int    @unique @default(autoincrement()) @map("order_number")
-  orderId     String @unique @map("order_id") // ORD-000001
+  id          String  @id @default(cuid())
+  orderNumber Int     @unique @default(autoincrement()) @map("order_number")
+  orderId     String? @unique @map("order_id") // ORD-000001
 
   totalPrice Int         @map("total_price")
   status     OrderStatus @default(PENDING)
