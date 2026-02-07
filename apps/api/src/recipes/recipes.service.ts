@@ -6,21 +6,29 @@ export class RecipesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll(skip = 0, take = 20) {
-    const recipes = await this.prisma.recipe.findMany({
-      where: { isPublished: true },
-      skip,
-      take,
-      include: {
-        author: true,
-        comments: true,
-        _count: { select: { likes: true } },
-      },
-    });
+    const where = { isPublished: true };
 
-    return recipes.map((recipe) => ({
-      ...recipe,
-      likesCount: recipe._count.likes,
-    }));
+    const [recipes, totalCount] = await Promise.all([
+      this.prisma.recipe.findMany({
+        where,
+        skip,
+        take,
+        include: {
+          author: true,
+          comments: true,
+          _count: { select: { likes: true } },
+        },
+      }),
+      this.prisma.recipe.count({ where }),
+    ]);
+
+    return {
+      items: recipes.map((recipe) => ({
+        ...recipe,
+        likesCount: recipe._count.likes,
+      })),
+      totalCount,
+    };
   }
 
   async findBySlug(slug: string) {

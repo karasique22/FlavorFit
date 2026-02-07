@@ -1,12 +1,12 @@
 import { Args, Int, Query, Resolver } from '@nestjs/graphql';
-import { Recipe } from './models';
+import { PaginatedRecipes, Recipe } from './models';
 import { RecipesService } from './recipes.service';
 
 @Resolver()
 export class RecipesResolver {
   constructor(private readonly recipesService: RecipesService) {}
 
-  @Query(() => [Recipe], {
+  @Query(() => PaginatedRecipes, {
     name: 'recipes',
     description: 'Get all recipes (public)',
   })
