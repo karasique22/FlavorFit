@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Ingredient } from '@repo/database';
 import { handlePrismaError } from 'src/common/utils/prisma-error.util';
@@ -38,11 +39,17 @@ export class OrdersService {
       0,
     );
 
-    // orderNumber is auto-incremented by the DB, so we create with a temp ID
-    // then update to the final ORD-XXXXXX format after getting the sequence value
+    /*
+     EN: orderNumber is auto-incremented by the DB, so we create with a temp ID,
+     then update to the final ORD-XXXXXX format after getting the sequence value.
+
+     RU: orderNumber автоматически увеличивается в БД, поэтому создаём с временным ID,
+     затем обновляем до финального формата ORD-XXXXXX после получения значения последовательности.
+     */
+
     try {
       return await this.prisma.$transaction(async (tx) => {
-        const tempOrderId = `TMP-${Date.now()}`;
+        const tempOrderId = `TMP-${Date.now()}-${randomUUID().slice(0, 8)}`;
 
         const order = await tx.order.create({
           data: {
