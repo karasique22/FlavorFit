@@ -1,12 +1,17 @@
+import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Throttle } from '@nestjs/throttler';
 import { Role } from '@repo/database';
 import { Auth } from 'src/auth/auth.decorator';
 import { CurrentUser } from 'src/common/decorators';
+import { GqlThrottlerGuard } from 'src/common/guards/gql-throttler.guard';
 import { UpdateUserProfileArgs } from './users.input';
 import { User } from './users.models';
 import { UsersService } from './users.service';
 
 @Resolver()
+@UseGuards(GqlThrottlerGuard)
+@Throttle({ default: { ttl: 60000, limit: 10 } })
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 

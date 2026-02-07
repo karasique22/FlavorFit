@@ -1,12 +1,14 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 import { Throttle } from '@nestjs/throttler';
+import { GqlThrottlerGuard } from 'src/common/guards/gql-throttler.guard';
 import type { GraphQLContext } from '../common/types/graphql.types';
 import { AuthInput } from './auth.input';
 import { AuthResponse } from './auth.models';
 import { AuthService } from './auth.service';
 
 @Resolver()
+@UseGuards(GqlThrottlerGuard)
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
