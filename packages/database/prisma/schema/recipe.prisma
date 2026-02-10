@@ -30,6 +30,7 @@ model Recipe {
 
   comments Comment[]
   likes    Like[]
+  views    Int       @default(0)
 
   isPublished Boolean   @default(false) @map("is_published")
   publishedAt DateTime? @map("published_at")
@@ -37,6 +38,9 @@ model Recipe {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  @@index([title])
+  @@index([createdAt(sort: Desc)])
+  @@index([views(sort: Desc)])
   @@map("recipes")
 }
 
