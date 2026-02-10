@@ -107,6 +107,7 @@ db-generate: ## Сгенерировать Prisma Client
 db-migrate: ## Создать и применить миграцию
 	@echo "$(GREEN)Применение миграций...$(NC)"
 	pnpm db:migrate
+	pnpm db:generate
 
 db-push: ## Отправить схему в БД без миграции (dev only)
 	@echo "$(YELLOW)Push схемы в БД (только для dev)...$(NC)"
