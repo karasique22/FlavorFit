@@ -80,8 +80,6 @@ export class RecipesAdminService {
   }
 
   async update(id: string, data: UpdateRecipeInput) {
-    await this.findOne(id);
-
     const {
       steps: stepsInput,
       ingredients: ingredientsInput,
