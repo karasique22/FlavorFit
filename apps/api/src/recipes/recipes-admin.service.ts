@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { handlePrismaError } from 'src/common/utils';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateRecipeInput, UpdateRecipeInput } from './recipes.input';
+import { CreateRecipeInput, UpdateRecipeInput } from './inputs/recipes.input';
 
 @Injectable()
 export class RecipesAdminService {
