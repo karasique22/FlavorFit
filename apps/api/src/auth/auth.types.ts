@@ -1,8 +1,9 @@
-import type { User } from '@repo/database';
-import { AuthUser } from './auth.models';
+import type { User } from '@repo/database'
 
-export type AuthTokenData = Pick<User, 'id' | 'role'>;
+import { AuthUser } from './auth.models'
 
-export type CurrentUser = Omit<AuthUser, 'password'>;
+export type AuthTokenData = Pick<User, 'id' | 'role'>
 
-export type RequestWithUser = { user?: CurrentUser };
+export type CurrentUser = Omit<AuthUser, 'password'>
+
+export type RequestWithUser = { user?: CurrentUser }

@@ -1,6 +1,7 @@
 # Red Winter 2026
 
-Turborepo-монорепозиторий: GraphQL API (NestJS) + Next.js frontend для приложения рецептов и планирования питания.
+Turborepo-монорепозиторий: GraphQL API (NestJS) + Next.js frontend для
+приложения рецептов и планирования питания.
 
 ## Стек технологий
 

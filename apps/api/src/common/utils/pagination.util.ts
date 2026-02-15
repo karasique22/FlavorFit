@@ -1,14 +1,14 @@
 export interface PaginationParams {
-  skip: number;
-  take: number;
+	skip: number
+	take: number
 }
 
 export function getPaginationParams(
-  page: number,
-  limit: number,
+	page: number,
+	limit: number
 ): PaginationParams {
-  return {
-    skip: (page - 1) * limit,
-    take: limit,
-  };
+	return {
+		skip: (page - 1) * limit,
+		take: limit
+	}
 }

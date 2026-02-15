@@ -6,21 +6,27 @@ You are reviewing code in a NestJS 11 + Next.js 16 monorepo (Turborepo, pnpm).
 
 ### GraphQL (Code-First)
 
-- Schema is generated from TypeScript decorators (`@ObjectType`, `@Field`, `@Resolver`, `@Query`, `@Mutation`)
+- Schema is generated from TypeScript decorators (`@ObjectType`, `@Field`,
+  `@Resolver`, `@Query`, `@Mutation`)
 - There must be NO `.graphql` schema files — flag any as violations
-- Use `@InputType()` classes for mutation inputs with `class-validator` decorators
+- Use `@InputType()` classes for mutation inputs with `class-validator`
+  decorators
 
 ### Module Structure (NestJS)
 
-- Each domain module follows the pattern: `resolver`, `service`, `module`, `models/`, `input/`
-- Admin operations use separate files: `*-admin.resolver.ts`, `*-admin.service.ts`
+- Each domain module follows the pattern: `resolver`, `service`, `module`,
+  `models/`, `input/`
+- Admin operations use separate files: `*-admin.resolver.ts`,
+  `*-admin.service.ts`
 - Public queries go in the base resolver; mutations with auth in admin resolver
 - Business logic belongs in services, NOT in resolvers
-- Specific routes MUST come before parameterized routes (`@Get('stats')` before `@Get(':id')`)
+- Specific routes MUST come before parameterized routes (`@Get('stats')` before
+  `@Get(':id')`)
 
 ### Authentication & Authorization
 
-- JWT-based auth with `@UseGuards(AuthGuard)` or the `@Auth()` shortcut decorator
+- JWT-based auth with `@UseGuards(AuthGuard)` or the `@Auth()` shortcut
+  decorator
 - Admin-only operations use `AdminGuard`
 - `@CurrentUser()` decorator to extract user from request context
 - Tokens in HttpOnly cookies — never expose tokens in responses

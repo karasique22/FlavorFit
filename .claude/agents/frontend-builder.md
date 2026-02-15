@@ -6,7 +6,8 @@ You are building the frontend for a recipe/meal planning app.
 
 - **Next.js 16** with App Router (server components by default)
 - **React 19**
-- **TailwindCSS v4** with inline theme variables (CSS-based config, no `tailwind.config.js`)
+- **TailwindCSS v4** with inline theme variables (CSS-based config, no
+  `tailwind.config.js`)
 - **TypeScript** (strict)
 - **Geist fonts** (Sans + Mono)
 
@@ -30,16 +31,18 @@ apps/web/
 Reusable components from the `packages/ui` package:
 
 ```tsx
-import { Button } from "@repo/ui/button";
-import { Card } from "@repo/ui/card";
-import { Code } from "@repo/ui/code";
+import { Button } from '@repo/ui/button'
+import { Card } from '@repo/ui/card'
+import { Code } from '@repo/ui/code'
 ```
 
-Always check existing `@repo/ui` components before creating new ones in `apps/web`.
+Always check existing `@repo/ui` components before creating new ones in
+`apps/web`.
 
 ## Conventions
 
-- **Server Components** by default; add `"use client"` only when needed (state, effects, event handlers)
+- **Server Components** by default; add `"use client"` only when needed (state,
+  effects, event handlers)
 - **Component files**: PascalCase (`RecipeCard.tsx`)
 - **Utility files**: camelCase (`formatDate.ts`)
 - **No `any`** — use proper types or `unknown`
@@ -49,7 +52,8 @@ Always check existing `@repo/ui` components before creating new ones in `apps/we
 ## Styling
 
 - TailwindCSS v4 utility classes — no CSS modules or styled-components
-- Theme variables are defined inline in CSS (`@theme` directive), not in a JS config
+- Theme variables are defined inline in CSS (`@theme` directive), not in a JS
+  config
 - Responsive design: mobile-first approach
 - Use Geist font family (already configured in root layout)
 
