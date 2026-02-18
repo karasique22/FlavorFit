@@ -142,4 +142,12 @@ db-reset: ## Сбросить БД и применить миграции зан
 # Утилиты
 # ======================
 
+codegen: ## Сгенерировать типы GraphQL для frontend (web)
+	@echo "$(GREEN)Генерация GraphQL типов для web...$(NC)"
+	pnpm --filter web run codegen
+
+codegen-watch: ## Следить за изменениями и генерировать типы GraphQL (web)
+	@echo "$(GREEN)Генерация GraphQL типов для web (watch)...$(NC)"
+	pnpm --filter web run codegen-watch
+
 .DEFAULT_GOAL := help
