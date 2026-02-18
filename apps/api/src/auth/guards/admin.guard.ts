@@ -2,6 +2,7 @@ import { ForbiddenError } from '@nestjs/apollo'
 import { CanActivate, ExecutionContext } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { GqlExecutionContext } from '@nestjs/graphql'
+
 import { Role } from '@repo/database'
 
 import { RequestWithUser } from '../auth.types'
