@@ -33,6 +33,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Generated (GraphQL codegen)
+apps/web/schema.json
+apps/web/src/__generated__/
+
 # Misc
 .DS_Store
 *.pem
