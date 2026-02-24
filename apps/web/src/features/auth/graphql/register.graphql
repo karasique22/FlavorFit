@@ -1,9 +1,11 @@
 mutation Register($data: AuthInput!) {
-  register(data: $data) {
-    accessToken
-
-    user {
-      email
-    }
-  }
+	register(data: $data) {
+		user {
+			email
+			role
+			profile {
+				fullName
+			}
+		}
+	}
 }
