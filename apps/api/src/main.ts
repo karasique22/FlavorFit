@@ -13,9 +13,7 @@ async function bootstrap() {
 
 	const isDev = process.env.NODE_ENV !== 'production'
 	app.enableCors({
-		origin: isDev
-			? ['http://localhost:3002', 'http://localhost:3001']
-			: process.env.FRONTEND_URL,
+		origin: isDev ? ['http://localhost:3000'] : process.env.FRONTEND_URL,
 		credentials: true
 	})
 	app.useGlobalPipes(
