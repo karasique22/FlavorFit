@@ -1,8 +1,12 @@
 import type { NextConfig } from 'next'
 
+const isProd = process.env.NODE_ENV === 'production'
+
 const nextConfig: NextConfig = {
-	/* config options here */
-	reactCompiler: true
+	reactCompiler: isProd,
+	images: {
+		domains: ['www.gravatar.com']
+	}
 }
 
 export default nextConfig

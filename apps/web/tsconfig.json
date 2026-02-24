@@ -18,9 +18,10 @@
         "name": "next"
       }
     ],
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@/constants/*": ["./src/shared/constants/*"],
+      "@/constants/*": ["./src/shared/constants/*"]
     }
   },
   "include": [
@@ -31,5 +32,5 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules", "src/__generated__"]
+  "exclude": ["node_modules"]
 }

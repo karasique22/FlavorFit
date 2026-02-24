@@ -6,13 +6,12 @@ const config: CodegenConfig = {
 	schema: 'http://localhost:4200/graphql',
 	documents: ['src/shared/graphql/**/*.graphql', 'src/features/**/*.graphql'],
 	generates: {
-		'src/__generated__/output.ts': {
-			plugins: [
-				{ add: { content: '/* eslint-disable */' } },
-				'typescript',
-				'typescript-operations',
-				'typescript-react-apollo'
-			],
+		'src/__generated__/': {
+			preset: 'client',
+			presetConfig: {
+				fragmentMasking: false
+			},
+			plugins: [{ add: { content: '/* eslint-disable */' } }],
 			config: {
 				enumsAsConst: true
 			}
