@@ -1,54 +1,56 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { Role } from '@repo/database';
-import { Auth } from 'src/auth/auth.decorator';
-import { CurrentUser } from 'src/common/decorators/current-user.decorator';
-import { CreateRecipeInput, UpdateRecipeInput } from './inputs/recipes.input';
-import { Recipe } from './models';
-import { RecipesAdminService } from './recipes-admin.service';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Auth } from 'src/auth/decorators/auth.decorator'
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator'
+
+import { Role } from '@repo/database'
+
+import { CreateRecipeInput, UpdateRecipeInput } from './inputs/recipes.input'
+import { Recipe } from './models'
+import { RecipesAdminService } from './recipes-admin.service'
 
 @Resolver()
 export class RecipesAdminResolver {
-  constructor(private readonly recipesAdminService: RecipesAdminService) {}
+	constructor(private readonly recipesAdminService: RecipesAdminService) {}
 
-  @Query(() => Recipe, {
-    name: 'recipe',
-    description: 'Get a single recipe by ID (admin)',
-  })
-  @Auth(Role.ADMIN)
-  getRecipeById(@Args('id') id: string) {
-    return this.recipesAdminService.findOne(id);
-  }
+	@Query(() => Recipe, {
+		name: 'recipe',
+		description: 'Get a single recipe by ID (admin)'
+	})
+	@Auth(Role.ADMIN)
+	getRecipeById(@Args('id') id: string) {
+		return this.recipesAdminService.findOne(id)
+	}
 
-  @Mutation(() => Recipe, {
-    name: 'createRecipe',
-    description: 'Create a new recipe',
-  })
-  @Auth(Role.ADMIN)
-  createRecipe(
-    @CurrentUser('id') userId: string,
-    @Args('input') input: CreateRecipeInput,
-  ) {
-    return this.recipesAdminService.create(userId, input);
-  }
+	@Mutation(() => Recipe, {
+		name: 'createRecipe',
+		description: 'Create a new recipe'
+	})
+	@Auth(Role.ADMIN)
+	createRecipe(
+		@CurrentUser('id') userId: string,
+		@Args('input') input: CreateRecipeInput
+	) {
+		return this.recipesAdminService.create(userId, input)
+	}
 
-  @Mutation(() => Recipe, {
-    name: 'updateRecipe',
-    description: 'Update an existing recipe',
-  })
-  @Auth(Role.ADMIN)
-  updateRecipeById(
-    @Args('id') id: string,
-    @Args('input') input: UpdateRecipeInput,
-  ) {
-    return this.recipesAdminService.update(id, input);
-  }
+	@Mutation(() => Recipe, {
+		name: 'updateRecipe',
+		description: 'Update an existing recipe'
+	})
+	@Auth(Role.ADMIN)
+	updateRecipeById(
+		@Args('id') id: string,
+		@Args('input') input: UpdateRecipeInput
+	) {
+		return this.recipesAdminService.update(id, input)
+	}
 
-  @Mutation(() => Recipe, {
-    name: 'deleteRecipe',
-    description: 'Delete a recipe',
-  })
-  @Auth(Role.ADMIN)
-  deleteRecipeById(@Args('id') id: string) {
-    return this.recipesAdminService.remove(id);
-  }
+	@Mutation(() => Recipe, {
+		name: 'deleteRecipe',
+		description: 'Delete a recipe'
+	})
+	@Auth(Role.ADMIN)
+	deleteRecipeById(@Args('id') id: string) {
+		return this.recipesAdminService.remove(id)
+	}
 }

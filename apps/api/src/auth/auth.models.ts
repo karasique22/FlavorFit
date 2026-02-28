@@ -5,4 +5,7 @@ import { User } from 'src/users/users.models'
 export class AuthResponse {
 	@Field(() => User)
 	user!: User
+
+	@Field(() => String, { nullable: true })
+	accessToken?: string
 }

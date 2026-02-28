@@ -6,17 +6,13 @@ import {
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import { hash, verify } from 'argon2'
-import { Response } from 'express'
+import { EmailService } from 'src/email/email.service'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { UsersService } from 'src/users/users.service'
-import { isDev } from 'src/utils/is-dev.util'
+import { generateToken } from 'src/utils/generate-token.util'
 
-import { ACCESS_TOKEN_NAME, REFRESH_TOKEN_NAME } from './auth.constants'
-import { AuthInput } from './auth.input'
-import type { AuthTokenData } from './auth.types'
-
-const MS_PER_HOUR = 60 * 60 * 1000
-const MS_PER_DAY = 24 * MS_PER_HOUR
+import type { AuthTokenData } from '../auth.types'
+import { AuthInput } from '../inputs/auth.input'
 
 @Injectable()
 export class AuthService {
@@ -24,7 +20,8 @@ export class AuthService {
 		private readonly prisma: PrismaService,
 		private readonly configService: ConfigService,
 		private readonly jwt: JwtService,
-		private readonly usersService: UsersService
+		private readonly usersService: UsersService,
+		private readonly emailService: EmailService
 	) {}
 
 	private readonly EXPIRE_HOURS_ACCESS = 1
@@ -40,15 +37,23 @@ export class AuthService {
 			throw new BadRequestException('Email already in use')
 		}
 
+		const emailVerificationToken = generateToken()
+
 		const user = await this.usersService.create(
 			email,
-			await hash(input.password)
+			await hash(input.password),
+			emailVerificationToken,
+			new Date(Date.now() + 60 * 60 * 1000) /* 1 hour */
 		)
 
 		const tokens = this.generateTokens({
 			id: user.id,
 			role: user.role
 		})
+
+		const verificationUrl = `${this.configService.get('CLIENT_URL')}/verify-email?token=${emailVerificationToken}`
+
+		await this.emailService.sendVerificationEmail(user.email, verificationUrl)
 
 		return { user, ...tokens }
 	}
@@ -98,7 +103,7 @@ export class AuthService {
 		return user
 	}
 
-	private generateTokens(data: AuthTokenData) {
+	generateTokens(data: AuthTokenData) {
 		const accessToken = this.jwt.sign(data, {
 			expiresIn: `${this.EXPIRE_HOURS_ACCESS}h`
 		})
@@ -111,48 +116,5 @@ export class AuthService {
 		)
 
 		return { accessToken, refreshToken }
-	}
-
-	setAuthCookies(
-		res: Response,
-		tokens: { accessToken: string; refreshToken: string } | null
-	) {
-		this.writeCookie(res, {
-			cookieName: ACCESS_TOKEN_NAME,
-			token: tokens?.accessToken || null,
-			expires: new Date(Date.now() + this.EXPIRE_HOURS_ACCESS * MS_PER_HOUR)
-		})
-
-		this.writeCookie(res, {
-			cookieName: REFRESH_TOKEN_NAME,
-			token: tokens?.refreshToken || null,
-			expires: new Date(Date.now() + this.EXPIRE_DAYS_REFRESH * MS_PER_DAY)
-		})
-	}
-
-	private writeCookie(
-		res: Response,
-		{
-			cookieName,
-			token,
-			expires
-		}: {
-			cookieName:
-				| typeof ACCESS_TOKEN_NAME
-				| typeof REFRESH_TOKEN_NAME
-			token: string | null
-			expires: Date
-		}
-	) {
-		if (token) {
-			res.cookie(cookieName, token, {
-				httpOnly: true,
-				expires,
-				sameSite: isDev(this.configService) ? 'none' : 'strict',
-				secure: true
-			})
-		} else {
-			res.clearCookie(cookieName)
-		}
 	}
 }
