@@ -11,6 +11,7 @@ import { Button } from '@/shared/components/ui/button'
 
 import { PAGES } from '@/shared/config/page.config'
 
+import { Logout } from '../../auth/ui/Logout'
 import { navMenuItems } from './nav.data'
 
 export function Header() {
@@ -27,7 +28,7 @@ export function Header() {
 				</Link>
 				<NavMenu menu={navMenuItems} />
 			</div>
-			<div className="flex items-center gap-8">
+			<div className="flex items-center gap-9">
 				<div className="flex gap-2">
 					<Button
 						variant="soft"
@@ -45,10 +46,14 @@ export function Header() {
 					</Button>
 				</div>
 
-				<UserInfo
-					name={user?.profile?.fullName || 'Guest'}
-					email={user?.email || ''}
-				/>
+				<div className="flex items-center gap-1">
+					<UserInfo
+						name={user?.profile?.fullName || 'Guest'}
+						email={user?.email || ''}
+					/>
+
+					<Logout />
+				</div>
 			</div>
 		</header>
 	)

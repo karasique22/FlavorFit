@@ -1,13 +1,16 @@
 'use client'
 
-import { useApolloClient, useMutation } from '@apollo/client/react'
+import { useMutation } from '@apollo/client/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
 import { Button } from '@/shared/components/ui/button'
 import { Input } from '@/shared/components/ui/input'
+
+import { PAGES } from '@/shared/config/page.config'
 
 import {
 	LoginDocument,
@@ -28,6 +31,7 @@ interface Props {
 
 export function AuthForm({ type }: Props) {
 	const isLogin = type === 'login'
+	const router = useRouter()
 
 	const {
 		register,
@@ -63,6 +67,8 @@ export function AuthForm({ type }: Props) {
 				isLogin ? 'Logged in successfully!' : 'Registered successfully!',
 				{ id: 'auth-success' }
 			)
+
+			router.replace(PAGES.DASHBOARD)
 		},
 		onError: e => {
 			toast.error(e.message, { id: 'auth-error' })
@@ -114,6 +120,7 @@ export function AuthForm({ type }: Props) {
 						<Button
 							type="submit"
 							variant="accent"
+							disabled={loading}
 						>
 							{type === 'register' ? 'Register' : 'Login'}
 						</Button>
