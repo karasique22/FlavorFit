@@ -22,20 +22,13 @@ export const { getClient, query, PreloadQuery } = registerApolloClient(() => {
 	})
 })
 
-export const simpleApolloClient = new BaseApolloClient({
-	link: ApolloLink.from([httpLink]),
-	cache: new InMemoryCache(),
-	devtools: {
-		enabled: true
-	}
-})
-
 export const serverApolloClient = new BaseApolloClient({
 	link: ApolloLink.from([httpLink]),
 	cache: new InMemoryCache(),
 	devtools: {
 		enabled: true
 	},
+	ssrMode: true,
 	defaultOptions: {
 		query: {
 			fetchPolicy: 'no-cache'
