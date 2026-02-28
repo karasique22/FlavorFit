@@ -1,4 +1,4 @@
-.PHONY: help dev dev-api dev-web build clean install lint format check-types test test-watch test-cov test-e2e db-generate db-migrate db-push db-studio db-reset
+.PHONY: help dev dev-api dev-web build clean install lint format check-types test test-watch test-cov test-e2e db-generate db-migrate db-push db-studio db-reset email-dev
 
 # Цвета для вывода
 GREEN := \033[0;32m
@@ -43,6 +43,10 @@ dev-web: ## Запустить только frontend в dev режиме
 dev-docs: ## Запустить только docs в dev режиме
 	@echo "$(GREEN)Запуск docs...$(NC)"
 	pnpm dev --filter=docs
+
+email-dev: ## Запустить react-email превью сервер
+	@echo "$(GREEN)Запуск react-email превью...$(NC)"
+	pnpm --filter=api email:dev
 
 # ======================
 # Сборка
@@ -103,11 +107,13 @@ test-e2e: ## Запустить e2e тесты (API)
 db-generate: ## Сгенерировать Prisma Client
 	@echo "$(GREEN)Генерация Prisma Client...$(NC)"
 	pnpm db:generate
+	pnpm --filter=@repo/database build
 
 db-migrate: ## Создать и применить миграцию
 	@echo "$(GREEN)Применение миграций...$(NC)"
 	pnpm db:migrate
 	pnpm db:generate
+	pnpm --filter=@repo/database build
 
 db-push: ## Отправить схему в БД без миграции (dev only)
 	@echo "$(YELLOW)Push схемы в БД (только для dev)...$(NC)"
