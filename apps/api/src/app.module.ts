@@ -2,7 +2,9 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { GraphQLModule } from '@nestjs/graphql'
+import { ServeStaticModule } from '@nestjs/serve-static'
 import { ThrottlerModule } from '@nestjs/throttler'
+import { join } from 'path'
 import { TurnstileModule } from 'nest-cloudflare-turnstile'
 import { ResendModule } from 'nestjs-resend'
 
@@ -13,6 +15,7 @@ import { registerGraphQLEnums } from './common/graphql-enums'
 import { getGraphQLConfig } from './config/graphql.config'
 import { getTurnstileConfig } from './config/turnstile.config'
 import { EmailModule } from './email/email.module'
+import { MediaUploadModule } from './media-upload/media-upload.module'
 import { OrdersModule } from './orders/orders.module'
 import { PrismaModule } from './prisma/prisma.module'
 import { RecipesModule } from './recipes/recipes.module'
@@ -47,12 +50,17 @@ registerGraphQLEnums()
 				apiKey: configService.getOrThrow<string>('RESEND_API_KEY') || ''
 			})
 		}),
+		ServeStaticModule.forRoot({
+			rootPath: join(__dirname, '..', 'uploads'),
+			serveRoot: '/uploads'
+		}),
 		PrismaModule,
 		AuthModule,
 		UsersModule,
 		RecipesModule,
 		OrdersModule,
-		EmailModule
+		EmailModule,
+		MediaUploadModule
 	],
 	controllers: [AppController],
 	providers: [AppService]
