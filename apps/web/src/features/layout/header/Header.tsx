@@ -15,44 +15,53 @@ import { Logout } from '../../auth/ui/Logout'
 import { navMenuItems } from './nav.data'
 
 export function Header() {
-	const { user } = useAuth()
+	const { user, isLoading } = useAuth()
 
 	return (
-		<header className="flex items-center justify-between p-5">
-			<div className="flex items-center gap-8">
-				<Link
-					href={PAGES.DASHBOARD}
-					className="from-primary to-primary-dark flex size-10 items-center justify-center rounded-full bg-linear-to-t text-center align-middle text-xl font-black text-white"
-				>
-					F
-				</Link>
-				<NavMenu menu={navMenuItems} />
-			</div>
-			<div className="flex items-center gap-9">
-				<div className="flex gap-2">
-					<Button
-						variant="soft"
-						size={'icon-lg'}
-						className="rounded-full"
-					>
-						<Headset />
-					</Button>
-					<Button
-						variant="soft"
-						size={'icon-lg'}
-						className="rounded-full"
-					>
-						<Bell />
-					</Button>
+		<header className="flex flex-col items-center justify-between gap-5 pb-5">
+			{user && !user?.isEmailVerified && (
+				<div className="text-primary border-primary w-full rounded-xl border-2 p-4 text-center">
+					Please verify your email address.
 				</div>
+			)}
+			<div className="flex w-full items-center justify-between">
+				<div className="flex items-center gap-8">
+					<Link
+						href={PAGES.DASHBOARD}
+						className="from-primary to-primary-dark flex size-10 items-center justify-center rounded-full bg-linear-to-t text-center align-middle text-xl font-black text-white"
+					>
+						F
+					</Link>
+					<NavMenu menu={navMenuItems} />
+				</div>
+				<div className="flex items-center gap-9">
+					<div className="flex gap-2">
+						<Button
+							variant="soft"
+							size={'icon-lg'}
+							className="rounded-full"
+						>
+							<Headset />
+						</Button>
+						<Button
+							variant="soft"
+							size={'icon-lg'}
+							className="rounded-full"
+						>
+							<Bell />
+						</Button>
+					</div>
 
-				<div className="flex items-center gap-1">
-					<UserInfo
-						name={user?.profile?.fullName || 'Guest'}
-						email={user?.email || ''}
-					/>
+					<div className="flex items-center gap-1">
+						<UserInfo
+							avatarUrl={user?.profile?.avatarUrl || ''}
+							name={user?.profile?.fullName || 'Guest'}
+							email={user?.email || ''}
+							isLoading={isLoading}
+						/>
 
-					<Logout />
+						<Logout />
+					</div>
 				</div>
 			</div>
 		</header>

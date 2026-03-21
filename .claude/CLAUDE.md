@@ -9,7 +9,7 @@ frontend for a recipe/meal planning app.
 Router + TailwindCSS v4 | PostgreSQL + Prisma 7 (PrismaPg adapter) | pnpm 9
 (enforced)
 
-**Ports:** API 3000 (default fallback 4200) | Web 3002 | Docs 3001
+**Ports:** API 4200 (fallback 3000) | Web 3000 | Docs 3001
 
 ---
 
@@ -41,7 +41,7 @@ pnpm check-types            # Type check all
 pnpm format                 # Prettier
 
 # Database (always from root, never from packages/database)
-pnpm db:generate            # Generate Prisma client (after schema changes)
+pnpm db:generate            # Generate Prisma client + rebuild @repo/database (after schema changes)
 pnpm db:migrate             # Create + apply migration
 pnpm db:push                # Push schema without migration (dev only)
 pnpm db:studio              # Prisma Studio GUI
@@ -56,19 +56,27 @@ pnpm test:e2e               # E2E tests
 ## API Architecture (`apps/api/src/`)
 
 **Modules registered in AppModule:** ConfigModule, GraphQLModule, PrismaModule,
-AuthModule, UsersModule, RecipesModule, OrdersModule
+AuthModule, UsersModule, RecipesModule, OrdersModule, EmailModule,
+MediaUploadModule, ThrottlerModule, TurnstileModule, ServeStaticModule, ResendModule
 
 **Module structure:**
 
 ```
-auth/           # JWT auth: resolver, service, guards (auth.guard, admin.guard), jwt.strategy
+auth/           # JWT auth: resolver, services/, guards/, decorators/, inputs/, strategies/
+  services/     # auth.service (login/logout/refresh), auth-account.service (register/verify/reset), auth-cookie.service (JWT cookies)
+  guards/       # auth.guard, admin.guard, gql-turnstile.guard (Cloudflare Turnstile captcha)
+  decorators/   # auth.decorator.ts (@Auth), captcha.decorator.ts (@Captcha), current-user.decorator.ts (@CurrentUser)
+  inputs/       # auth.input.ts, reset-password-input.ts, reset-password-request.input.ts
 users/          # User CRUD: resolver, service, input, models
 recipes/        # Public queries (resolver + service) + Admin CRUD (admin.resolver + admin.service)
   ingredients/  # Nested: admin resolver + service
 orders/         # Order management: resolver, service
+email/          # Email sending via Resend: EmailModule + EmailService + Handlebars templates
+media-upload/   # File uploads: REST controller + service (not GraphQL)
 prisma/         # PrismaService (PrismaPg adapter + pg Pool)
-config/         # graphql.config.ts, jwt.config.ts
-common/         # graphql-enums.ts, decorators (current-user), utils (prisma-error), types (graphql context)
+config/         # graphql.config.ts, jwt.config.ts, turnstile.config.ts
+common/         # graphql-enums.ts, decorators/, utils/ (prisma-error, pagination), types/ (graphql context), guards/ (gql-throttler)
+utils/          # generate-token.util.ts, is-dev.util.ts (API-level helpers)
 ```
 
 **When creating new modules:** Always read an existing module (e.g. `recipes/`)
@@ -82,6 +90,7 @@ first and follow the same file structure and patterns.
 - Same pattern for ingredients: `ingredients-admin.resolver.ts`
 - Auth: JWT with `@UseGuards(AuthGuard)`, `@Auth()` decorator, `AdminGuard` for
   admin-only
+- **Captcha:** Cloudflare Turnstile on sensitive mutations — use `@Captcha()` decorator + `GqlTurnstileGuard`
 - PrismaService: extends PrismaClient with PrismaPg adapter,
   OnModuleInit/OnModuleDestroy lifecycle
 - **Prisma error handling:** Always use `handlePrismaError` from
@@ -89,7 +98,7 @@ first and follow the same file structure and patterns.
   (create/update/delete). Pattern:
   `try { return await prisma... } catch (error) { handlePrismaError(error); }`
 - Apollo Sandbox at `/graphql` (dev only)
-- CORS allows localhost:3002 and localhost:3001 in dev
+- CORS allows localhost:3000 and localhost:3001 in dev
 - ValidationPipe global: whitelist, forbidNonWhitelisted, transform
 
 ---
@@ -112,12 +121,29 @@ Prisma / snake_case in DB (`@map`)
 
 **Workflow:** Edit .prisma files → `pnpm db:generate` → `pnpm db:migrate`
 
+**Important:** `@repo/database` exports from `dist/` (compiled). `pnpm db:generate` now also rebuilds `dist/` automatically. If API still shows stale types after schema change, run `pnpm --filter=@repo/database build` manually.
+
 ---
 
 ## Frontend (`apps/web`)
 
 Next.js 16 App Router + TailwindCSS v4 with inline theme variables. Shared UI
 from `@repo/ui` (`import { Button } from "@repo/ui/button"`). Geist fonts.
+
+**Structure:**
+
+```
+src/
+  app/              # Next.js pages: auth/ (login, register, forgot-password, reset-password), dashboard/, verify-email/
+  features/         # Feature modules — UI + graphql/ + types/: auth/, profile/, layout/
+  shared/           # components/, config/, constants/, hooks/, lib/, types/, utils/
+  proxy.ts          # Next.js middleware proxy with JWT validation
+  app/ApolloWrapper.tsx # Apollo Client provider
+```
+
+**GraphQL в web:** `.graphql` файлы лежат в `features/*/graphql/` — codegen генерирует типы в `src/__generated__/`. В отличие от API, в web используются именно .graphql файлы.
+
+**Auth flow:** Email verification (`/verify-email`), forgot password (`/auth/forgot-password`), reset password (`/auth/reset-password`).
 
 ---
 

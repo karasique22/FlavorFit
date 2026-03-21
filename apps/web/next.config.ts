@@ -8,7 +8,14 @@ const nextConfig: NextConfig = {
 		JWT_SECRET: process.env.JWT_SECRET
 	},
 	images: {
-		domains: ['www.gravatar.com']
+		remotePatterns: [
+			{ hostname: 'www.gravatar.com' },
+			{
+				hostname: new URL(
+					process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4200'
+				).hostname
+			}
+		]
 	}
 }
 

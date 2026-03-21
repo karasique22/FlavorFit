@@ -3,6 +3,7 @@ class PageConfig {
 
 	readonly DASHBOARD = '/dashboard'
 
+	readonly PROFILE = `${this.DASHBOARD}/profile`
 	readonly MEAL_PLANS = `${this.DASHBOARD}/meal-plans`
 	readonly NUTRITION = `${this.DASHBOARD}/nutrition`
 	readonly ANALYTICS = `${this.DASHBOARD}/analytics`
@@ -13,6 +14,8 @@ class PageConfig {
 	private readonly AUTH = '/auth'
 	readonly LOGIN = `${this.AUTH}/login`
 	readonly REGISTER = `${this.AUTH}/register`
+	readonly FORGOT_PASSWORD = `${this.AUTH}/forgot-password`
+	readonly RESET_PASSWORD = `${this.AUTH}/reset-password`
 }
 
 export const PAGES = new PageConfig()

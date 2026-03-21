@@ -1,8 +1,10 @@
 mutation Register($data: AuthInput!) {
 	register(data: $data) {
 		user {
+			id
 			email
 			role
+			isEmailVerified
 			profile {
 				fullName
 			}

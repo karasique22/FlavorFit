@@ -4,7 +4,9 @@ import { useMutation } from '@apollo/client/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { Turnstile } from 'react-turnstile'
 import { toast } from 'sonner'
 
 import { Button } from '@/shared/components/ui/button'
@@ -46,6 +48,8 @@ export function AuthForm({ type }: Props) {
 		}
 	})
 
+	const [captchaToken, setCaptchaToken] = useState<string | null>('')
+
 	const [auth, { loading, error }] = useMutation<
 		LoginMutation | RegisterMutation,
 		LoginMutationVariables | RegisterMutationVariables
@@ -68,7 +72,7 @@ export function AuthForm({ type }: Props) {
 				{ id: 'auth-success' }
 			)
 
-			router.replace(PAGES.DASHBOARD)
+			router.push(PAGES.DASHBOARD)
 		},
 		onError: e => {
 			toast.error(e.message, { id: 'auth-error' })
@@ -76,7 +80,17 @@ export function AuthForm({ type }: Props) {
 	})
 
 	const onSubmit = (data: AuthFormData) => {
-		auth({ variables: { data } })
+		if (!captchaToken) {
+			toast.error('Please complete the CAPTCHA challenge.', {
+				id: 'captcha-error'
+			})
+			return
+		}
+
+		auth({
+			variables: { data },
+			context: { headers: { 'cf-turnstile-token': captchaToken } }
+		})
 	}
 
 	return (
@@ -115,6 +129,15 @@ export function AuthForm({ type }: Props) {
 							{errors.password.message}
 						</p>
 					)}
+
+					<div className="flex justify-center pt-2">
+						<Turnstile
+							sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SECRET_KEY!}
+							onSuccess={token => setCaptchaToken(token)}
+							onExpire={() => setCaptchaToken(null)}
+							theme="light"
+						/>
+					</div>
 
 					<div className="text-center">
 						<Button

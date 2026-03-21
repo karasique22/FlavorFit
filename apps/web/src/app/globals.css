@@ -30,6 +30,7 @@
 	--color-border: var(--border);
 
 	--color-destructive: var(--destructive);
+	--color-success: var(--success);
 
 	--color-muted-foreground: var(--muted-foreground);
 	--color-muted: var(--muted);
@@ -90,6 +91,7 @@
 
 	--primary-gradient: linear-gradient(90deg, #7c5cff 0%, #b693ff 100%);
 
+	--success: #4ade80;
 	--destructive: #ea2a2a;
 
 	--border: oklch(0.92 0.004 286.32);

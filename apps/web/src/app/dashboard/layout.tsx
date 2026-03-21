@@ -4,7 +4,7 @@ import { Header } from '@/features/layout/header/Header'
 
 export default function Layout({ children }: PropsWithChildren<unknown>) {
 	return (
-		<div>
+		<div className="p-5">
 			<Header />
 			{children}
 		</div>

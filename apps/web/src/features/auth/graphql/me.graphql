@@ -1,9 +1,12 @@
 query Me {
 	me {
+		id
 		profile {
 			fullName
+			avatarUrl
 		}
 		email
 		role
+		isEmailVerified
 	}
 }

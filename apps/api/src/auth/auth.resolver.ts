@@ -91,7 +91,6 @@ export class AuthResolver {
 		name: 'requestPasswordReset',
 		description: 'Request a password reset email with a reset token'
 	})
-	@VerifyCaptcha()
 	async requestPasswordReset(@Args('data') input: ResetPasswordRequestInput) {
 		return this.authAccountService.requestPasswordReset(input.email)
 	}

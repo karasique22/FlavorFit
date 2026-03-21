@@ -1,8 +1,10 @@
 mutation Login($data: AuthInput!) {
 	login(data: $data) {
 		user {
+			id
 			email
 			role
+			isEmailVerified
 			profile {
 				fullName
 			}

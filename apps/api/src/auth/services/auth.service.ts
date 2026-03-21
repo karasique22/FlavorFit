@@ -51,7 +51,7 @@ export class AuthService {
 			role: user.role
 		})
 
-		const verificationUrl = `${this.configService.get('CLIENT_URL')}/verify-email?token=${emailVerificationToken}`
+		const verificationUrl = `${this.configService.get('FRONTEND_URL')}/verify-email?token=${emailVerificationToken}`
 
 		await this.emailService.sendVerificationEmail(user.email, verificationUrl)
 

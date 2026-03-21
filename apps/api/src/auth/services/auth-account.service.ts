@@ -59,9 +59,11 @@ export class AuthAccountService {
 			}
 		})
 
-		const resetUrl = `${this.configService.get('FRONTEND_URL')}/reset-password?token=${resetToken}`
+		const resetUrl = `${this.configService.get('FRONTEND_URL')}/auth/reset-password?token=${resetToken}`
 
 		await this.emailService.sendResetPasswordEmail(user.email, resetUrl)
+
+		return true
 	}
 
 	async resetPassword(token: string, newPassword: string) {

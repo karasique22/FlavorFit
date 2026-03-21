@@ -40,3 +40,6 @@ apps/web/src/__generated__/
 # Misc
 .DS_Store
 *.pem
+
+# Uploads
+apps/api/uploads/
