@@ -1,0 +1,25 @@
+mutation updateProfile(
+	$profile: UpdateProfileInput
+	$measurements: UpdateBodyMeasurementsInput
+) {
+	updateProfile(profile: $profile, measurements: $measurements) {
+		id
+		email
+		profile {
+			fullName
+			gender
+			age
+			bio
+			activityLevel
+			nutritionalGoal
+			bodyMeasurements {
+				height
+				weight
+				waistCircumference
+				chestMeasurement
+				armCircumference
+				thighCircumference
+			}
+		}
+	}
+}
