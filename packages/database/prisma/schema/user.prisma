@@ -27,12 +27,12 @@ model User {
 model Profile {
   id String @id @default(cuid())
 
-  fullName    String?
-  avatar      String?
-  gender      Gender?
-  dateOfBirth DateTime? @map("date_of_birth")
-  bio         String?
-  socials     Json? // JSON array
+  fullName  String?
+  avatarUrl String? @map("avatar")
+  gender    Gender?
+  age       Int?    @map("age")
+  bio       String?
+  socials   Json? // JSON array
 
   bodyMeasurements BodyMeasurements[]
 
@@ -53,6 +53,7 @@ model BodyMeasurements {
 
   height             Float? // в см
   weight             Float? // в кг
+  goalWeight         Float? @map("goal_weight") // в кг
   waistCircumference Float? @map("waist_circumference") // в см
   chestMeasurement   Float? @map("chest_measurement") // в см
   thighCircumference Float? @map("thigh_circumference") // в см
