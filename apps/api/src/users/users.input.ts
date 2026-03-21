@@ -1,4 +1,4 @@
-import { ArgsType, Field, Float, InputType } from '@nestjs/graphql';
+import { ArgsType, Field, Float, InputType, Int } from '@nestjs/graphql';
 import { ActivityLevel, Gender, NutritionalGoal } from '@repo/database';
 import { Type } from 'class-transformer';
 import { IsOptional, ValidateNested } from 'class-validator';
@@ -11,15 +11,15 @@ export class UpdateProfileInput {
 
   @Field({ nullable: true })
   @IsOptional()
-  avatar?: string;
+  avatarUrl?: string;
 
   @Field(() => Gender, { nullable: true })
   @IsOptional()
   gender?: Gender;
 
-  @Field({ nullable: true })
+  @Field(() => Int, { nullable: true })
   @IsOptional()
-  dateOfBirth?: Date;
+  age?: number;
 
   @Field({ nullable: true })
   @IsOptional()
@@ -47,6 +47,10 @@ export class UpdateBodyMeasurementsInput {
   @Field(() => Float, { nullable: true })
   @IsOptional()
   weight?: number;
+
+  @Field(() => Float, { nullable: true })
+  @IsOptional()
+  goalWeight?: number;
 
   @Field(() => Float, { nullable: true })
   @IsOptional()

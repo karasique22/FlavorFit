@@ -1,80 +1,87 @@
-import { Field, Float, ObjectType } from '@nestjs/graphql';
-import { ActivityLevel, Gender, NutritionalGoal, Role } from '@repo/database';
+import { Field, Float, Int, ObjectType } from '@nestjs/graphql'
+
+import { ActivityLevel, Gender, NutritionalGoal, Role } from '@repo/database'
 
 @ObjectType()
 export class BodyMeasurements {
-  @Field()
-  id!: string;
+	@Field()
+	id!: string
 
-  @Field(() => Float, { nullable: true })
-  height?: number;
+	@Field(() => Float, { nullable: true })
+	height?: number
 
-  @Field(() => Float, { nullable: true })
-  weight?: number;
+	@Field(() => Float, { nullable: true })
+	weight?: number
 
-  @Field(() => Float, { nullable: true })
-  waistCircumference?: number;
+	@Field(() => Float, { nullable: true })
+	goalWeight?: number
 
-  @Field(() => Float, { nullable: true })
-  chestMeasurement?: number;
+	@Field(() => Float, { nullable: true })
+	waistCircumference?: number
 
-  @Field(() => Float, { nullable: true })
-  thighCircumference?: number;
+	@Field(() => Float, { nullable: true })
+	chestMeasurement?: number
 
-  @Field(() => Float, { nullable: true })
-  armCircumference?: number;
+	@Field(() => Float, { nullable: true })
+	thighCircumference?: number
 
-  @Field()
-  createdAt!: Date;
+	@Field(() => Float, { nullable: true })
+	armCircumference?: number
+
+	@Field()
+	createdAt!: Date
 }
 
 @ObjectType()
 export class Profile {
-  @Field()
-  id!: string;
+	@Field()
+	id!: string
 
-  @Field({ nullable: true })
-  fullName?: string;
+	@Field({ nullable: true })
+	fullName?: string
 
-  @Field({ nullable: true })
-  avatar?: string;
+	@Field({ nullable: true })
+	avatarUrl?: string
 
-  @Field(() => Gender, { nullable: true })
-  gender?: Gender;
+	@Field(() => Gender, { nullable: true })
+	gender?: Gender
 
-  @Field({ nullable: true })
-  dateOfBirth?: Date;
+	@Field(() => Int, { nullable: true })
+	age?: number
 
-  @Field({ nullable: true })
-  bio?: string;
+	@Field({ nullable: true })
+	bio?: string
 
-  @Field(() => [String], { nullable: true })
-  socials?: string[];
+	@Field(() => [String], { nullable: true })
+	socials?: string[]
 
-  @Field(() => [BodyMeasurements])
-  bodyMeasurements!: BodyMeasurements[];
+	@Field(() => [BodyMeasurements])
+	bodyMeasurements!: BodyMeasurements[]
 
-  @Field(() => NutritionalGoal, { nullable: true })
-  nutritionalGoal?: NutritionalGoal;
+	@Field(() => NutritionalGoal, { nullable: true })
+	nutritionalGoal?: NutritionalGoal
 
-  @Field(() => ActivityLevel, { nullable: true })
-  activityLevel?: ActivityLevel;
+	@Field(() => ActivityLevel, { nullable: true })
+	activityLevel?: ActivityLevel
 
-  @Field()
-  updatedAt!: Date;
+	@Field()
+	updatedAt!: Date
 }
 
 @ObjectType()
 export class User {
-  @Field()
-  id!: string;
+	@Field()
+	id!: string
 
-  @Field()
-  email!: string;
+	@Field()
+	email!: string
 
-  @Field(() => Profile, { nullable: true })
-  profile?: Profile;
+	@Field(() => Profile, { nullable: true })
+	profile?: Profile
 
-  @Field(() => Role)
-  role!: Role;
+	@Field(() => Role)
+	role!: Role
+
+	@Field()
+	isEmailVerified!: boolean
 }

@@ -1,7 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
-import type { User } from '@repo/database'
 import { handlePrismaError } from 'src/common/utils'
 import { PrismaService } from 'src/prisma/prisma.service'
+
+import type { User } from '@repo/database'
 
 import { UpdateUserProfileArgs } from './users.input'
 
@@ -10,7 +11,11 @@ export class UsersService {
 	constructor(private readonly prisma: PrismaService) {}
 
 	private readonly userWithProfileInclude = {
-		profile: { include: { bodyMeasurements: true } }
+		profile: {
+			include: {
+				bodyMeasurements: { orderBy: { createdAt: 'desc' as const }, take: 1 }
+			}
+		}
 	}
 
 	findAll() {
@@ -21,7 +26,8 @@ export class UsersService {
 
 	findUserByEmail(email: string) {
 		return this.prisma.user.findUnique({
-			where: { email: email.toLowerCase() }
+			where: { email: email.toLowerCase() },
+			include: this.userWithProfileInclude
 		})
 	}
 
