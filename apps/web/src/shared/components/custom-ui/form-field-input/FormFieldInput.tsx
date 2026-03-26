@@ -17,7 +17,7 @@ interface Props<T extends FieldValues> {
 	control: Control<T>
 	name: FieldPath<T>
 	label?: string
-	icon: LucideIcon
+	icon?: LucideIcon
 	placeholder?: string
 	unit?: string
 	trailing?: ReactNode
