@@ -1,26 +1,23 @@
 'use client'
 
-import { toOptionalNumber } from '@/shared/utils'
-import { Activity, Ruler, Scale, Target } from 'lucide-react'
+import { Activity, Target } from 'lucide-react'
 import Image from 'next/image'
 import { UseFormReturn } from 'react-hook-form'
 
-import { FieldInput } from '@/shared/components/custom-ui/field-input/FieldInput'
-import { FormSelect } from '@/shared/components/custom-ui/form-select/FormSelect'
+import { FormFieldSelect } from '@/shared/components/custom-ui/form-field-select/FormFieldSelect'
 
 import { formatEnum } from '@/shared/utils/enum'
 
 import { ActivityLevel, NutritionalGoal } from '@/__generated__/graphql'
 
 import { ProfileForm } from '../types/profile-update.schema'
+import { MeasurementField } from './MeasurementField'
 
 interface Props {
 	form: UseFormReturn<ProfileForm, unknown, ProfileForm>
 }
 
 export function BodyMeasurementsForm({ form }: Props) {
-	const { register, control } = form
-
 	return (
 		<div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
 			<div className="flex gap-6">
@@ -39,83 +36,62 @@ export function BodyMeasurementsForm({ form }: Props) {
 					</h2>
 
 					<div className="space-y-3">
-						<FieldInput
-							label="Growth"
-							icon={Ruler}
+						<MeasurementField
+							form={form}
+							name="measurements.height"
+							label="Height"
 							unit="cm"
-							type="number"
-							{...register('measurements.height', {
-								setValueAs: toOptionalNumber
-							})}
 						/>
 
 						<div className="grid grid-cols-2 gap-3">
-							<FieldInput
+							<MeasurementField
+								form={form}
+								name="measurements.weight"
 								label="Current weight"
-								icon={Scale}
 								unit="kg"
-								type="number"
-								{...register('measurements.weight', {
-									setValueAs: toOptionalNumber
-								})}
 							/>
-							<FieldInput
+							<MeasurementField
+								form={form}
+								name="measurements.goalWeight"
 								label="Desired weight"
-								icon={Scale}
 								unit="kg"
-								type="number"
-								{...register('measurements.goalWeight', {
-									setValueAs: toOptionalNumber
-								})}
 							/>
 						</div>
 
 						<div className="grid grid-cols-2 gap-3">
-							<FieldInput
-								label="Waist circumference"
-								icon={Ruler}
+							<MeasurementField
+								form={form}
+								name="measurements.waistCircumference"
+								label="Waist"
 								unit="cm"
-								type="number"
-								{...register('measurements.waistCircumference', {
-									setValueAs: toOptionalNumber
-								})}
 							/>
-							<FieldInput
+							<MeasurementField
+								form={form}
+								name="measurements.chestMeasurement"
 								label="Chest"
-								icon={Ruler}
 								unit="cm"
-								type="number"
-								{...register('measurements.chestMeasurement', {
-									setValueAs: toOptionalNumber
-								})}
 							/>
 						</div>
 
 						<div className="grid grid-cols-2 gap-3">
-							<FieldInput
-								label="Thigh circumference"
-								icon={Ruler}
+							<MeasurementField
+								form={form}
+								name="measurements.thighCircumference"
+								label="Thigh"
 								unit="cm"
-								type="number"
-								{...register('measurements.thighCircumference', {
-									setValueAs: toOptionalNumber
-								})}
 							/>
-							<FieldInput
-								label="Arm circumference"
-								icon={Ruler}
+							<MeasurementField
+								form={form}
+								name="measurements.armCircumference"
+								label="Arm"
 								unit="cm"
-								type="number"
-								{...register('measurements.armCircumference', {
-									setValueAs: toOptionalNumber
-								})}
 							/>
 						</div>
 
-						<FormSelect
-							control={control}
+						<FormFieldSelect
+							control={form.control}
 							name="profile.nutritionalGoal"
-							label="Set your nutritional goals"
+							label="Nutritional goal"
 							icon={Target}
 							options={Object.values(NutritionalGoal).map(v => ({
 								value: v,
@@ -123,10 +99,10 @@ export function BodyMeasurementsForm({ form }: Props) {
 							}))}
 						/>
 
-						<FormSelect
-							control={control}
+						<FormFieldSelect
+							control={form.control}
 							name="profile.activityLevel"
-							label="Define your activity level"
+							label="Activity level"
 							icon={Activity}
 							options={Object.values(ActivityLevel).map(v => ({
 								value: v,

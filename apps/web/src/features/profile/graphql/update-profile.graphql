@@ -6,15 +6,20 @@ mutation updateProfile(
 		id
 		email
 		profile {
+			id
 			fullName
+			avatarUrl
+			socials
 			gender
 			age
 			bio
 			activityLevel
 			nutritionalGoal
+			
 			bodyMeasurements {
 				height
 				weight
+				goalWeight
 				waistCircumference
 				chestMeasurement
 				armCircumference

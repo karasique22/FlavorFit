@@ -1,8 +1,7 @@
 'use client'
 
-import { toOptionalNumber } from '@/shared/utils'
 import {
-	CheckCircle2,
+	CheckCircle,
 	CircleAlert,
 	Link2,
 	Mail,
@@ -10,12 +9,18 @@ import {
 	UserRound,
 	X
 } from 'lucide-react'
-import { UseFormReturn } from 'react-hook-form'
+import { UseFormReturn, useFieldArray } from 'react-hook-form'
 
 import { FieldInput } from '@/shared/components/custom-ui/field-input/FieldInput'
-import { FormSelect } from '@/shared/components/custom-ui/form-select/FormSelect'
+import { FormFieldInput } from '@/shared/components/custom-ui/form-field-input/FormFieldInput'
+import { FormFieldSelect } from '@/shared/components/custom-ui/form-field-select/FormFieldSelect'
 import { Button } from '@/shared/components/ui/button'
-import { Input } from '@/shared/components/ui/input'
+import {
+	FormControl,
+	FormField,
+	FormItem,
+	FormMessage
+} from '@/shared/components/ui/form'
 
 import { formatEnum } from '@/shared/utils/enum'
 import { getGravatarUrl } from '@/shared/utils/gravatar'
@@ -32,20 +37,16 @@ interface Props {
 }
 
 export function GeneralInfoForm({ form, email, isEmailVerified }: Props) {
-	const { register, watch, setValue, control } = form
+	const { watch, setValue, control } = form
 
-	const socials = watch('profile.socials') ?? []
-
-	function addSocial() {
-		setValue('profile.socials', [...socials, ''])
-	}
-
-	function removeSocial(index: number) {
-		setValue(
-			'profile.socials',
-			socials.filter((_, i) => i !== index)
-		)
-	}
+	const {
+		fields: socialFields,
+		append,
+		remove
+	} = useFieldArray({
+		control,
+		name: 'profile.socials'
+	})
 
 	return (
 		<div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
@@ -61,14 +62,17 @@ export function GeneralInfoForm({ form, email, isEmailVerified }: Props) {
 							watch('profile.avatarUrl') ||
 							(email ? getGravatarUrl(email) : undefined)
 						}
-						onChange={url => setValue('profile.avatarUrl', url)}
+						onChange={url =>
+							setValue('profile.avatarUrl', url, { shouldDirty: true })
+						}
 					/>
 					<div className="flex-1">
-						<FieldInput
+						<FormFieldInput
+							control={control}
+							name="profile.fullName"
 							label="Full name"
 							icon={UserRound}
 							placeholder="Full Name"
-							{...register('profile.fullName')}
 						/>
 					</div>
 				</div>
@@ -81,13 +85,13 @@ export function GeneralInfoForm({ form, email, isEmailVerified }: Props) {
 					readOnly
 					trailing={
 						isEmailVerified ? (
-							<CheckCircle2
-								size={16}
+							<CheckCircle
+								size={20}
 								className="text-success"
 							/>
 						) : (
 							<CircleAlert
-								size={16}
+								size={20}
 								className="text-destructive"
 							/>
 						)
@@ -96,7 +100,7 @@ export function GeneralInfoForm({ form, email, isEmailVerified }: Props) {
 
 				{/* Gender + Age */}
 				<div className="grid grid-cols-2 gap-3">
-					<FormSelect
+					<FormFieldSelect
 						control={control}
 						name="profile.gender"
 						label="Gender"
@@ -106,57 +110,82 @@ export function GeneralInfoForm({ form, email, isEmailVerified }: Props) {
 							label: formatEnum(v)
 						}))}
 					/>
-					<div>
-						<label className="mb-1 block text-xs text-gray-400">Age</label>
-						<Input
-							type="number"
-							min={1}
-							max={120}
-							placeholder="30 y.o."
-							variant="pill"
-							{...register('profile.age', { setValueAs: toOptionalNumber })}
-						/>
-					</div>
+					<FormFieldInput
+						control={control}
+						name="profile.age"
+						label="Age"
+						icon={UserRound}
+						type="number"
+						placeholder="30 y.o."
+					/>
 				</div>
 
 				{/* Bio */}
-				<div>
-					<label className="mb-1 block text-xs text-gray-400">Bio</label>
-					<textarea
-						rows={4}
-						placeholder="Tell something about yourself..."
-						className="focus:border-primary focus:ring-primary/50 w-full resize-none rounded-2xl border-3 border-gray-100 bg-gray-50 px-4 py-2.5 text-sm text-gray-800 transition-colors outline-none placeholder:text-gray-400 focus:bg-white focus:ring-1"
-						{...register('profile.bio')}
-					/>
-				</div>
+				<FormField
+					control={control}
+					name="profile.bio"
+					render={({ field }) => (
+						<FormItem className="gap-0">
+							<FormControl>
+								<div>
+									<label className="mb-1 block text-xs text-gray-400">
+										Bio
+									</label>
+									<div className="focus-within:border-primary focus-within:ring-primary/50 overflow-hidden rounded-2xl border-3 border-gray-100 bg-gray-50 transition-colors focus-within:bg-white focus-within:ring-1">
+										<textarea
+											rows={4}
+											maxLength={500}
+											placeholder="Tell something about yourself..."
+											className="w-full resize-none bg-transparent px-4 py-2.5 text-sm text-gray-800 outline-none placeholder:text-gray-400"
+											{...field}
+											value={field.value ?? ''}
+										/>
+									</div>
+								</div>
+							</FormControl>
+							<FormMessage className="text-xs" />
+						</FormItem>
+					)}
+				/>
 
 				{/* Socials */}
 				<div>
 					<label className="mb-2 block text-xs text-gray-400">Sites</label>
 					<div className="space-y-2">
-						{socials.map((_, index) => (
-							<FieldInput
-								key={index}
-								icon={Link2}
-								placeholder="https://..."
-								trailing={
-									<button
-										type="button"
-										onClick={() => removeSocial(index)}
-										className="flex h-5 w-5 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-600"
-									>
-										<X size={12} />
-									</button>
-								}
-								{...register(`profile.socials.${index}`)}
+						{socialFields.map((socialField, index) => (
+							<FormField
+								key={socialField.id}
+								control={control}
+								name={`profile.socials.${index}.value`}
+								render={({ field }) => (
+									<FormItem className="gap-0">
+										<FormControl>
+											<FieldInput
+												icon={Link2}
+												placeholder="https://..."
+												trailing={
+													<button
+														type="button"
+														onClick={() => remove(index)}
+														className="flex h-5 w-5 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-600"
+													>
+														<X size={12} />
+													</button>
+												}
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage className="text-xs" />
+									</FormItem>
+								)}
 							/>
 						))}
 						<Button
 							type="button"
 							variant="ghost"
 							size="sm"
-							className="rounded-full text-gray-500 hover:text-gray-700"
-							onClick={addSocial}
+							className="focus-visible:ring-primary rounded-full text-gray-500 hover:text-gray-700 focus-visible:ring-offset-2"
+							onClick={() => append({ value: '' })}
 						>
 							<Plus size={14} /> Add website address
 						</Button>

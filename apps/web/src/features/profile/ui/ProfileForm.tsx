@@ -4,11 +4,12 @@ import { useMutation } from '@apollo/client/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { UserRoundCog } from 'lucide-react'
 import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, useFormState } from 'react-hook-form'
 import { toast } from 'sonner'
 
 import { HeadingWithIcon } from '@/shared/components/custom-ui/heading-with-icon/HeadingWithIcon'
 import { Button } from '@/shared/components/ui/button'
+import { Form } from '@/shared/components/ui/form'
 
 import { GetProfileQuery, UpdateProfileDocument } from '@/__generated__/graphql'
 
@@ -31,7 +32,10 @@ export function ProfileForm({ data }: { data: GetProfileQuery }) {
 		const { profile } = data.me
 
 		form.reset({
-			profile,
+			profile: {
+				...profile,
+				socials: profile.socials?.map(value => ({ value })) ?? []
+			},
 			measurements: profile.bodyMeasurements[0]
 		})
 	}, [data, form])
@@ -45,49 +49,62 @@ export function ProfileForm({ data }: { data: GetProfileQuery }) {
 	const submit = form.handleSubmit(({ profile, measurements }) => {
 		updateProfile({
 			variables: {
-				profile,
+				profile: {
+					...profile,
+					socials: profile.socials?.map(({ value }) => value)
+				},
 				measurements
 			}
 		})
 	})
 
+	const { isDirty, isValid } = useFormState({ control: form.control })
+
+	const reset = () => {
+		form.reset()
+	}
+
 	return (
-		<form
-			className="space-y-6 rounded-2xl bg-white p-5"
-			onSubmit={submit}
-		>
-			<div className="flex justify-between">
-				<HeadingWithIcon Icon={UserRoundCog}>
-					Personal Information
-				</HeadingWithIcon>
+		<Form {...form}>
+			<form
+				className="space-y-6 rounded-2xl bg-white p-5"
+				onSubmit={submit}
+			>
+				<div className="flex justify-between">
+					<HeadingWithIcon Icon={UserRoundCog}>
+						Personal Information
+					</HeadingWithIcon>
 
-				<div className="flex gap-2">
-					<Button
-						className="rounded-full"
-						variant="outline"
-						type="button"
-					>
-						Cancel
-					</Button>
+					<div className="flex gap-2">
+						<Button
+							className="rounded-full"
+							variant="outline"
+							type="button"
+							onClick={reset}
+							disabled={loading || !isDirty}
+						>
+							Cancel
+						</Button>
 
-					<Button
-						className="rounded-full"
-						variant="accent"
-						disabled={loading || !form.formState.isDirty}
-					>
-						Save changes
-					</Button>
+						<Button
+							className="rounded-full"
+							variant="accent"
+							disabled={loading || !isDirty || !isValid}
+						>
+							Save changes
+						</Button>
+					</div>
 				</div>
-			</div>
 
-			<div className="grid grid-cols-2 gap-8">
-				<GeneralInfoForm
-					form={form}
-					email={data?.me?.email}
-					isEmailVerified={data?.me?.isEmailVerified}
-				/>
-				<BodyMeasurementsForm form={form} />
-			</div>
-		</form>
+				<div className="grid grid-cols-2 gap-8">
+					<GeneralInfoForm
+						form={form}
+						email={data?.me?.email}
+						isEmailVerified={data?.me?.isEmailVerified}
+					/>
+					<BodyMeasurementsForm form={form} />
+				</div>
+			</form>
+		</Form>
 	)
 }

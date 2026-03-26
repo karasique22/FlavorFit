@@ -1,7 +1,8 @@
 'use client'
 
-import { Edit } from 'lucide-react'
-import { useState } from 'react'
+import { Loader2, Pencil } from 'lucide-react'
+import { useRef, useState } from 'react'
+import { toast } from 'sonner'
 
 import { Button } from '@/shared/components/ui/button'
 
@@ -16,24 +17,30 @@ interface Props {
 
 export function AvatarUpload({ value, onChange }: Props) {
 	const [loading, setLoading] = useState(false)
+	const inputRef = useRef<HTMLInputElement>(null)
 
 	async function upload(file: File) {
 		setLoading(true)
 
-		const formData = new FormData()
-		formData.append('file', file)
+		try {
+			const formData = new FormData()
+			formData.append('file', file)
 
-		const res = await fetch(`${SERVER_URL}/media-upload/avatar`, {
-			method: 'POST',
-			body: formData,
-			credentials: 'include'
-		})
+			const res = await fetch(`${SERVER_URL}/media-upload/avatar`, {
+				method: 'POST',
+				body: formData,
+				credentials: 'include'
+			})
 
-		const data = await res.json()
+			if (!res.ok) throw new Error('Upload failed')
 
-		onChange(data.url)
-
-		setLoading(false)
+			const data = await res.json()
+			onChange(data.url)
+		} catch {
+			toast.error('Failed to upload avatar')
+		} finally {
+			setLoading(false)
+		}
 	}
 
 	return (
@@ -46,24 +53,25 @@ export function AvatarUpload({ value, onChange }: Props) {
 				alt="avatar"
 				className="size-20 rounded-full object-cover"
 			/>
+			<input
+				ref={inputRef}
+				type="file"
+				hidden
+				accept="image/*"
+				onChange={e => {
+					const file = e.target.files?.[0]
+					if (file) upload(file)
+				}}
+			/>
 			<Button
+				type="button"
 				className="absolute right-0 bottom-0 rounded-full bg-white p-0.5"
 				variant="soft"
 				size="icon-xs"
 				disabled={loading}
+				onClick={() => inputRef.current?.click()}
 			>
-				<input
-					type="file"
-					hidden
-					accept="image/*"
-					onChange={e => {
-						const file = e.target.files?.[0]
-						if (file) upload(file)
-					}}
-				/>
-				<span>
-					<Edit className={loading ? 'animate-spin' : ''} />
-				</span>
+				{loading ? <Loader2 className="animate-spin" /> : <Pencil />}
 			</Button>
 		</div>
 	)

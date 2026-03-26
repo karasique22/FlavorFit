@@ -9,7 +9,6 @@ import { ProfileSkeleton } from './ProfileSkeleton'
 
 export function Profile() {
 	const { data, loading } = useQuery(GetProfileDocument)
-	console.log('Profile data:', data)
 
 	if (loading || !data?.me) {
 		return <ProfileSkeleton />
