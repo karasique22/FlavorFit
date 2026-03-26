@@ -4,9 +4,12 @@ import {
 	CheckCircle,
 	CircleAlert,
 	Link2,
+	LucideIcon,
 	Mail,
+	Mars,
 	Plus,
 	UserRound,
+	Venus,
 	X
 } from 'lucide-react'
 import { UseFormReturn, useFieldArray } from 'react-hook-form'
@@ -28,12 +31,17 @@ import { getGravatarUrl } from '@/shared/utils/gravatar'
 import { Gender } from '@/__generated__/graphql'
 
 import { ProfileForm } from '../types/profile-update.schema'
-import { AvatarUpload } from './AvatarUpload'
+import { AvatarInput } from './AvatarInput'
 
 interface Props {
 	form: UseFormReturn<ProfileForm, unknown, ProfileForm>
 	email?: string
 	isEmailVerified?: boolean
+}
+
+const genderIcon: Partial<Record<Gender, LucideIcon>> = {
+	MALE: Mars,
+	FEMALE: Venus
 }
 
 export function GeneralInfoForm({ form, email, isEmailVerified }: Props) {
@@ -48,6 +56,9 @@ export function GeneralInfoForm({ form, email, isEmailVerified }: Props) {
 		name: 'profile.socials'
 	})
 
+	const gender = watch('profile.gender')
+	const icon = (gender && genderIcon[gender]) ?? UserRound
+
 	return (
 		<div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
 			<h2 className="mb-5 text-base font-semibold text-gray-900">
@@ -57,13 +68,13 @@ export function GeneralInfoForm({ form, email, isEmailVerified }: Props) {
 			<div className="space-y-3">
 				{/* Avatar + Full Name */}
 				<div className="flex items-center gap-4">
-					<AvatarUpload
+					<AvatarInput
 						value={
 							watch('profile.avatarUrl') ||
 							(email ? getGravatarUrl(email) : undefined)
 						}
-						onChange={url =>
-							setValue('profile.avatarUrl', url, { shouldDirty: true })
+						onChange={file =>
+							setValue('avatarFile', file, { shouldDirty: true })
 						}
 					/>
 					<div className="flex-1">
@@ -104,7 +115,7 @@ export function GeneralInfoForm({ form, email, isEmailVerified }: Props) {
 						control={control}
 						name="profile.gender"
 						label="Gender"
-						icon={UserRound}
+						icon={icon}
 						options={Object.values(Gender).map(v => ({
 							value: v,
 							label: formatEnum(v)
@@ -114,7 +125,6 @@ export function GeneralInfoForm({ form, email, isEmailVerified }: Props) {
 						control={control}
 						name="profile.age"
 						label="Age"
-						icon={UserRound}
 						type="number"
 						placeholder="30 y.o."
 					/>

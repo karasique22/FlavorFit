@@ -13,6 +13,8 @@ import { Form } from '@/shared/components/ui/form'
 
 import { GetProfileQuery, UpdateProfileDocument } from '@/__generated__/graphql'
 
+import { uploadAvatar } from '../services/upload-avatar'
+
 import {
 	type ProfileForm,
 	profileFormSchema
@@ -46,11 +48,23 @@ export function ProfileForm({ data }: { data: GetProfileQuery }) {
 		}
 	})
 
-	const submit = form.handleSubmit(({ profile, measurements }) => {
+	const submit = form.handleSubmit(async ({ profile, measurements, avatarFile }) => {
+		let avatarUrl = profile.avatarUrl
+
+		if (avatarFile) {
+			try {
+				avatarUrl = await uploadAvatar(avatarFile)
+			} catch {
+				toast.error('Failed to upload avatar')
+				return
+			}
+		}
+
 		updateProfile({
 			variables: {
 				profile: {
 					...profile,
+					avatarUrl,
 					socials: profile.socials?.map(({ value }) => value)
 				},
 				measurements
