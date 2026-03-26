@@ -49,6 +49,17 @@ export function AuthForm({ type }: Props) {
 	})
 
 	const [captchaToken, setCaptchaToken] = useState<string | null>('')
+	const [isCaptchaVerified, setIsCaptchaVerified] = useState(false)
+
+	const handleCaptchaSuccess = (token: string) => {
+		setCaptchaToken(token)
+		setIsCaptchaVerified(true)
+	}
+
+	const handleCaptchaExpire = () => {
+		setCaptchaToken(null)
+		setIsCaptchaVerified(false)
+	}
 
 	const [auth, { loading, error }] = useMutation<
 		LoginMutation | RegisterMutation,
@@ -133,8 +144,8 @@ export function AuthForm({ type }: Props) {
 					<div className="flex justify-center pt-2">
 						<Turnstile
 							sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SECRET_KEY!}
-							onSuccess={token => setCaptchaToken(token)}
-							onExpire={() => setCaptchaToken(null)}
+							onSuccess={handleCaptchaSuccess}
+							onExpire={handleCaptchaExpire}
 							theme="light"
 						/>
 					</div>
@@ -143,7 +154,7 @@ export function AuthForm({ type }: Props) {
 						<Button
 							type="submit"
 							variant="accent"
-							disabled={loading}
+							disabled={loading || !isCaptchaVerified}
 						>
 							{type === 'register' ? 'Register' : 'Login'}
 						</Button>
