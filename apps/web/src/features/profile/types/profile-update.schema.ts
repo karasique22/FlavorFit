@@ -10,6 +10,7 @@ const positiveFloat = (min: number, max: number, unit: string) =>
 		.nullish()
 
 export const profileFormSchema = z.object({
+	avatarFile: z.instanceof(File).optional(),
 	profile: z.object({
 		fullName: z.string().max(100, 'Name must be at most 100 characters').nullish(),
 		gender: z.enum(Gender).nullish(),
