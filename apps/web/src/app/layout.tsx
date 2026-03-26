@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 
 import { Toaster } from '@/shared/components/ui/sonner'
+import { TooltipProvider } from '@/shared/components/ui/tooltip'
 
 import { SITE_NAME } from '@/shared/constants/seo.constants'
 
@@ -36,7 +37,9 @@ export default function RootLayout({
 			<body
 				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
-				<ApolloWrapper>{children}</ApolloWrapper>
+				<TooltipProvider>
+					<ApolloWrapper>{children}</ApolloWrapper>
+				</TooltipProvider>
 				<Toaster />
 			</body>
 		</html>
