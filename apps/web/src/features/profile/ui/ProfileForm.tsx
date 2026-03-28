@@ -14,7 +14,6 @@ import { Form } from '@/shared/components/ui/form'
 import { GetProfileQuery, UpdateProfileDocument } from '@/__generated__/graphql'
 
 import { uploadAvatar } from '../services/upload-avatar'
-
 import {
 	type ProfileForm,
 	profileFormSchema
@@ -48,29 +47,31 @@ export function ProfileForm({ data }: { data: GetProfileQuery }) {
 		}
 	})
 
-	const submit = form.handleSubmit(async ({ profile, measurements, avatarFile }) => {
-		let avatarUrl = profile.avatarUrl
+	const submit = form.handleSubmit(
+		async ({ profile, measurements, avatarFile }) => {
+			let avatarUrl = profile.avatarUrl
 
-		if (avatarFile) {
-			try {
-				avatarUrl = await uploadAvatar(avatarFile)
-			} catch {
-				toast.error('Failed to upload avatar')
-				return
+			if (avatarFile) {
+				try {
+					avatarUrl = await uploadAvatar(avatarFile)
+				} catch {
+					toast.error('Failed to upload avatar')
+					return
+				}
 			}
+
+			updateProfile({
+				variables: {
+					profile: {
+						...profile,
+						avatarUrl,
+						socials: profile.socials?.map(({ value }) => value)
+					},
+					measurements
+				}
+			})
 		}
-
-		updateProfile({
-			variables: {
-				profile: {
-					...profile,
-					avatarUrl,
-					socials: profile.socials?.map(({ value }) => value)
-				},
-				measurements
-			}
-		})
-	})
+	)
 
 	const { isDirty, isValid } = useFormState({ control: form.control })
 
@@ -81,7 +82,7 @@ export function ProfileForm({ data }: { data: GetProfileQuery }) {
 	return (
 		<Form {...form}>
 			<form
-				className="space-y-6 rounded-2xl bg-white p-5"
+				className="w-full space-y-6 rounded-2xl bg-white p-5"
 				onSubmit={submit}
 			>
 				<div className="flex justify-between">
@@ -110,7 +111,7 @@ export function ProfileForm({ data }: { data: GetProfileQuery }) {
 					</div>
 				</div>
 
-				<div className="grid grid-cols-2 gap-8">
+				<div className="grid flex-1 grid-cols-2 gap-8">
 					<GeneralInfoForm
 						form={form}
 						email={data?.me?.email}
