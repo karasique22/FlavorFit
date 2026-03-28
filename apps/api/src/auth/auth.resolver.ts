@@ -41,7 +41,7 @@ export class AuthResolver {
 		return response
 	}
 
-	@Throttle({ default: { ttl: 60000, limit: 5 } })
+	@Throttle({ default: { ttl: 60000, limit: 15 } })
 	@VerifyCaptcha()
 	@Mutation(() => AuthResponse, {
 		name: 'login',
