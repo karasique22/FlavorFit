@@ -4,9 +4,11 @@ import { Header } from '@/features/layout/header/Header'
 
 export default function Layout({ children }: PropsWithChildren<unknown>) {
 	return (
-		<div className="p-5">
+		<div className="flex flex-col h-full p-5">
 			<Header />
-			{children}
+			<div className="flex-1 flex min-h-0">
+				{children}
+			</div>
 		</div>
 	)
 }

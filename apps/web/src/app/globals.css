@@ -65,7 +65,7 @@
 :root {
 	--radius: 0.625rem;
 
-	--background: #f3f4f6;
+	--background: #f5f4f5;
 	--foreground: #111;
 
 	--card: oklch(1 0 0);
@@ -151,13 +151,16 @@
 	* {
 		@apply border-border outline-ring/50;
 	}
+	html,
+	body {
+		height: 100%;
+	}
+	html {
+		font-size: 16px;
+	}
 	body {
 		@apply bg-background text-foreground;
 	}
-}
-
-html {
-	font-size: 18px;
 }
 
 button {
