@@ -1,12 +1,9 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 
-import { Toaster } from '@/shared/components/ui/sonner'
-import { TooltipProvider } from '@/shared/components/ui/tooltip'
-
 import { SITE_NAME } from '@/shared/constants/seo.constants'
 
-import { ApolloWrapper } from './ApolloWrapper'
+import { Providers } from './Providers'
 import './globals.css'
 
 const geistSans = Geist({
@@ -37,10 +34,7 @@ export default function RootLayout({
 			<body
 				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
-				<TooltipProvider>
-					<ApolloWrapper>{children}</ApolloWrapper>
-				</TooltipProvider>
-				<Toaster />
+				<Providers>{children}</Providers>
 			</body>
 		</html>
 	)
