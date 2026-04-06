@@ -4,7 +4,7 @@ model Recipe {
   title       String
   slug        String  @unique
   description String?
-  heroImage   String? @map("hero_image")
+  imageUrl    String? @map("image_url")
 
   difficulty Difficulty @default(EASY)
   mealType   MealType?  @map("meal_type")
@@ -19,6 +19,9 @@ model Recipe {
   fat      Int?
   carbs    Int?
   fibers   Int?
+
+  dishType   DishType? @relation(fields: [dishTypeId], references: [id])
+  dishTypeId String?   @map("dish_type_id")
 
   author   User?   @relation(fields: [authorId], references: [id])
   authorId String? @map("author_id")
@@ -120,6 +123,19 @@ model RecipeTag {
 
   @@id([recipeId, tagId])
   @@map("recipe_tags")
+}
+
+model DishType {
+  id   String @id @default(cuid())
+  name String @unique
+  slug String @unique
+
+  recipes Recipe[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("dish_types")
 }
 
 enum Difficulty {
