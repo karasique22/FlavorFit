@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { DishTypesModule } from './dish-types/dish-types.module';
 import { IngredientsModule } from './ingredients/ingredients.module';
 import { RecipesAdminResolver } from './recipes-admin.resolver';
 import { RecipesAdminService } from './recipes-admin.service';
@@ -13,6 +14,6 @@ import { FeedbackModule } from './feedback/feedback.module';
     RecipesAdminResolver,
     RecipesAdminService,
   ],
-  imports: [IngredientsModule, FeedbackModule],
+  imports: [IngredientsModule, FeedbackModule, DishTypesModule],
 })
 export class RecipesModule {}

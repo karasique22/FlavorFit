@@ -1,6 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { DietType, Difficulty, MealType } from '@repo/database';
 import { User } from 'src/users/users.models';
+import { DishType } from '../dish-types/dish-types.model';
 import { RecipeIngredient } from './recipe-ingredient.model';
 import { RecipeStep } from './recipe-step.model';
 import { RecipeTag } from './recipe-tag.model';
@@ -20,7 +21,7 @@ export class Recipe {
   description?: string;
 
   @Field({ nullable: true })
-  heroImage?: string;
+  imageUrl?: string;
 
   @Field(() => Difficulty)
   difficulty!: Difficulty;
@@ -30,6 +31,9 @@ export class Recipe {
 
   @Field(() => DietType, { nullable: true })
   dietType?: DietType;
+
+  @Field(() => DishType, { nullable: true })
+  dishType?: DishType;
 
   @Field(() => Int, { nullable: true })
   prepTimeMinutes?: number;
@@ -66,6 +70,9 @@ export class Recipe {
 
   @Field(() => [RecipeTag], { nullable: true })
   tags?: RecipeTag[];
+
+  @Field(() => Int)
+  views!: number;
 
   @Field(() => Int)
   likesCount!: number;

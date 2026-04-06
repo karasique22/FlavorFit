@@ -9,6 +9,7 @@ export class RecipesAdminService {
 
   private readonly recipeWithRelationsInclude = {
     author: true,
+    dishType: true,
     steps: {
       orderBy: {
         order: 'asc' as const,
@@ -149,6 +150,7 @@ export class RecipesAdminService {
       where: { id },
       include: {
         author: true,
+        dishType: true,
         ingredients: {
           include: {
             ingredient: true,

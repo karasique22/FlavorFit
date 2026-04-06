@@ -38,7 +38,7 @@ export class CreateRecipeInput {
   @Field({ nullable: true })
   @IsUrl()
   @IsOptional()
-  heroImage?: string;
+  imageUrl?: string;
 
   @Field(() => Difficulty, { defaultValue: Difficulty.EASY })
   @IsEnum(Difficulty)
@@ -54,6 +54,11 @@ export class CreateRecipeInput {
   @IsEnum(DietType)
   @IsOptional()
   dietType?: DietType;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  dishTypeId?: string;
 
   @Field(() => Int, { nullable: true })
   @IsInt()

@@ -41,6 +41,7 @@ export class RecipesService {
         orderBy: this.getOrderBy(sort),
         include: {
           author: true,
+          dishType: true,
           comments: true,
           _count: { select: { likes: true } },
         },
@@ -75,6 +76,7 @@ export class RecipesService {
       where: { slug, isPublished: true },
       include: {
         author: true,
+        dishType: true,
         steps: {
           orderBy: {
             order: 'asc',
