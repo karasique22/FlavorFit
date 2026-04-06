@@ -5,8 +5,7 @@ export interface SidebarCollapsibleSubItem extends SelectOption {
 	count?: number
 }
 
-export interface SidebarCollapsibleItem {
-	label: string
+export interface SidebarCollapsibleItem extends SelectOption {
 	icon?: LucideIcon
 	items: SidebarCollapsibleSubItem[]
 }

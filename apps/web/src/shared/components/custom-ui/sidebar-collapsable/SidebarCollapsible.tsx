@@ -1,3 +1,4 @@
+import { cn } from '@/shared/utils'
 import { ChevronDown, CornerDownRight } from 'lucide-react'
 
 import {
@@ -11,9 +12,15 @@ import { SidebarCollapsibleItem } from './sidebar-collapsible.types'
 
 interface Props {
 	data: SidebarCollapsibleItem[]
+	activeFilters?: string[]
+	onFilterToggle?: (filter: string) => void
 }
 
-export function SidebarCollapsible({ data }: Props) {
+export function SidebarCollapsible({
+	data,
+	activeFilters,
+	onFilterToggle
+}: Props) {
 	return (
 		<div className="space-y-1.5 py-4">
 			{data.map((item, index) => (
@@ -24,7 +31,12 @@ export function SidebarCollapsible({ data }: Props) {
 				>
 					<CollapsibleTrigger asChild>
 						<Button
-							className="group text-md flex items-center rounded-full p-3"
+							className={cn(
+								'group flex w-full items-center gap-2 rounded-full px-3 py-1.5 transition-colors duration-300',
+								activeFilters?.some(filter =>
+									item.items.some(subItem => subItem.value === filter)
+								) && 'bg-accent'
+							)}
 							variant={'ghost'}
 						>
 							{item.icon && <item.icon className="size-5" />}
@@ -32,11 +44,15 @@ export function SidebarCollapsible({ data }: Props) {
 							<ChevronDown className="ml-auto size-5 transition-transform group-data-[state=open]:-rotate-180" />
 						</Button>
 					</CollapsibleTrigger>
-					<CollapsibleContent className="mr-2 ml-5 flex flex-col gap-2 py-2 text-sm text-gray-500/80">
+					<CollapsibleContent className="mr-2 ml-4 flex flex-col py-2 text-sm text-gray-500/80">
 						{item.items.map((subItem, subIndex) => (
 							<button
-								className="flex items-center gap-1.5"
+								className={cn(
+									'flex items-center gap-1.5 rounded-full p-1.5 hover:bg-gray-100',
+									activeFilters?.includes(subItem.value) && 'text-black'
+								)}
 								key={subIndex}
+								onClick={() => onFilterToggle?.(subItem.value)}
 							>
 								<div className="flex items-center gap-1.5">
 									<CornerDownRight
