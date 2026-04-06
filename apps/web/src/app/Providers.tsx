@@ -1,5 +1,6 @@
 'use client'
 
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { type PropsWithChildren } from 'react'
 
 import { Toaster } from '@/shared/components/ui/sonner'
@@ -9,11 +10,13 @@ import { ApolloWrapper } from './ApolloWrapper'
 
 export function Providers({ children }: PropsWithChildren) {
 	return (
-		<TooltipProvider>
-			<ApolloWrapper>
-				{children}
-				<Toaster />
-			</ApolloWrapper>
-		</TooltipProvider>
+		<NuqsAdapter>
+			<TooltipProvider>
+				<ApolloWrapper>
+					{children}
+					<Toaster />
+				</ApolloWrapper>
+			</TooltipProvider>
+		</NuqsAdapter>
 	)
 }

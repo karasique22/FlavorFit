@@ -11,6 +11,7 @@ import { PAGES } from '@/shared/config/page.config'
 import { VerifyEmailDocument } from '@/__generated__/graphql'
 
 export function VerifyEmail() {
+	// TODO: change for nuqs
 	const searchParams = useSearchParams()
 	const router = useRouter()
 

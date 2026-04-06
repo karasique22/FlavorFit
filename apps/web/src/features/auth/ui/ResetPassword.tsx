@@ -21,6 +21,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 export function ResetPassword() {
+	// TODO: change for nuqs
 	const searchParams = useSearchParams()
 	const router = useRouter()
 
