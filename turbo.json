@@ -12,6 +12,7 @@
 			"env": ["DATABASE_URL"]
 		},
 		"db:migrate": {
+			"dependsOn": ["db:generate"],
 			"cache": false,
 			"env": ["DATABASE_URL"]
 		},

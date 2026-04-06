@@ -128,7 +128,7 @@ Prisma / snake_case in DB (`@map`)
 ## Frontend (`apps/web`)
 
 Next.js 16 App Router + TailwindCSS v4 with inline theme variables. Shared UI
-from `@repo/ui` (`import { Button } from "@repo/ui/button"`). Geist fonts.
+from `@repo/ui` (`import { Button } from "@/shared/components/ui/button"`). Geist fonts.
 
 **Structure:**
 

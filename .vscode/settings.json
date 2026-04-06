@@ -4,5 +4,6 @@
       "mode": "auto"
     }
   ],
-  "prettier.prettierPath": "./node_modules/.pnpm/prettier@3.7.4/node_modules/prettier/index.cjs"
+  "prettier.prettierPath": "./node_modules/.pnpm/prettier@3.7.4/node_modules/prettier/index.cjs",
+  "typescript.preferences.includePackageJsonAutoImports": "on"
 }
