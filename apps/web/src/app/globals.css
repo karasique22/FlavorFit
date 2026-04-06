@@ -170,3 +170,11 @@ button {
 .link-simple {
 	@apply text-white underline underline-offset-4 transition-colors hover:text-purple-300;
 }
+
+@utility scrollbar-none {
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+}

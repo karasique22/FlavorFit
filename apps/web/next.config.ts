@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
 	images: {
 		remotePatterns: [
 			{ hostname: 'www.gravatar.com' },
+			{ hostname: 'images.unsplash.com' },
 			{
 				hostname: new URL(
 					process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4200'

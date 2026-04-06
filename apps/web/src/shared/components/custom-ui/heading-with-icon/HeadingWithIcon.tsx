@@ -12,7 +12,7 @@ export function HeadingWithIcon({ Icon, children }: Props) {
 			<div className="flex items-center gap-2">
 				<Icon
 					size={24}
-					className="opacity-50"
+					className="opacity-60"
 				/>
 				<h1 className="text-xl font-semibold">{children}</h1>
 			</div>
